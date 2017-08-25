@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: development
+  data:
+    rest:
+      base-path: /api
+gakusei:
+  data-init: false
+  event-logging: true
+  questions-quantity: 20
+
+---
+
+spring:
+  profiles: development
+  datasource:
+    url: jdbc:h2:mem:gakusei:DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL;INIT=create schema if not exists CONTENTSCHEMA
+    driver-class-name: org.h2.Driver
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+
+gakusei:
+  data-init: true
+
+---
+
+spring:
+  profiles: postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gakusei
+    username: gakusei
+    password: gakusei
+    driver-class-name: org.postgresql.Driver
+
+---
+
+spring:
+  profiles: enable-resource-caching
+  caching: true
+
