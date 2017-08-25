@@ -81,6 +81,11 @@
 			<artifactId>mockito-core</artifactId>
 			<version>2.8.47</version>
 		</dependency>
+		<dependency>
+			<groupId>se.kits.gakusei</groupId>
+			<artifactId>gakusei</artifactId>
+			<version>1.0.12</version>
+		</dependency>
 	</dependencies>
 
 	<build>
