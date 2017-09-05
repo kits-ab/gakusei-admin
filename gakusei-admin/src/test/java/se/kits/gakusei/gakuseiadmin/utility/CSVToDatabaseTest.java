@@ -12,28 +12,16 @@ import static org.junit.Assert.*;
 
 public class CSVToDatabaseTest {
 
-    String testString = "[{\n" +
-            "    \"swedish\": [\n" +
-            "      \"servitör\"\n" +
-            "    ],\n" +
-            "    \"genki\": [\n" +
-            "      \"13\"\n" +
-            "    ],\n" +
-            "    \"writing\": [\n" +
-            "      \"ウエイター\"\n" +
-            "    ],\n" +
-            "    \"english\": [\n" +
-            "      \"waiter\"\n" +
-            "    ],\n" +
-            "    \"reading\": [\n" +
-            "      \"ウエイター\"\n" +
-            "    ],\n" +
-            "    \"state\": \"\",\n" +
-            "    \"id\": \"12x1\",\n" +
-            "    \"type\": [\n" +
-            "      \"noun\"\n" +
-            "    ]\n" +
-            "  }]";
+    String testString = "Year,Make,Model,Description,Price\n" +
+            "1997,Ford,E350,\"ac, abs, moon\",3000.00\n" +
+            "1999,Chevy,\"Venture \"\"Extended Edition\"\"\",\"\",4900.00\n" +
+            "   \n" +
+            "# Look, a multi line value. And blank rows around it!\n" +
+            "     \n" +
+            "1996,Jeep,Grand Cherokee,\"MUST SELL!\n" +
+            "air, moon roof, loaded\",4799.00\n" +
+            "1999,Chevy,\"Venture \"\"Extended Edition, Very Large\"\"\",,5000.00\n" +
+            ",,\"Venture \"\"Extended Edition\"\"\",\"\",4900.00";
 
     @Test
     public void testParser(){
