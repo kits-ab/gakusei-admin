@@ -4,9 +4,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import static org.junit.Assert.*;
 
@@ -25,9 +23,20 @@ public class CSVToDatabaseTest {
 
     @Test
     public void testParser(){
-        MultipartFile mpf = new MockMultipartFile("file", "test.txt", "test/plain", testString.getBytes());
-        CSVToDatabase csvParser = new CSVToDatabase(mpf);
-        assertEquals(true, csvParser.parse());
+        FileInputStream fip;
+
+        try {
+            fip = new FileInputStream(new File("src/test/resources/csv/NuggetCsvShouldPass.csv"));
+            MultipartFile mpf = new MockMultipartFile("file", fip);
+            CSVToDatabase csvParser = new CSVToDatabase(mpf);
+            assertEquals(true, csvParser.parse());
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+
     }
 
 }
