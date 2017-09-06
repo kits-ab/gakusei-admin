@@ -1,6 +1,6 @@
 # Header row
 
-Id,description,title,wordtype,lessons,swedish,english,jpRead,jpWrite,hidden
+Id,description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
 
 # Body rows
 
