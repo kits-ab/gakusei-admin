@@ -24,6 +24,9 @@ spring:
 gakusei:
   data-init: true
 
+liquibase:
+      enabled: false
+
 ---
 
 spring:
@@ -33,6 +36,10 @@ spring:
     username: gakusei
     password: gakusei
     driver-class-name: org.postgresql.Driver
+
+liquibase:
+      #change-log: classpath:/db/db.changelog-master.yaml
+      enabled: false
 
 ---
 
