@@ -4,4 +4,4 @@ Id,description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
 
 # Body rows
 
-1,"Test nugget","Test title (convert to book object)","Test type (convert to type object)","this, is, a, list, of, lessons","svenska","english","Japanese reading","Japanese writing",false
+1,"Test nugget","Test title (convert to book object)","Test type (convert to type object)","Verbs, test, with, more, lessons","svenska","english","Japanese reading","Japanese writing",false
