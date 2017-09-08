@@ -32,7 +32,7 @@ public class csvUtilTest {
             fip = new FileInputStream(new File("src/test/resources/csv/QuizCsvShouldPass.csv"));
             MultipartFile mpf = new MockMultipartFile("file", fip);
 
-            Map<String, List<String[]>> result = QuizCsv.parse(mpf);
+            Map<String, List<String[]>> result = Csv.parse(mpf);
 
             for (String[] value: result.get("HEADERS")) {
                 Assert.assertEquals("name", value[0]);

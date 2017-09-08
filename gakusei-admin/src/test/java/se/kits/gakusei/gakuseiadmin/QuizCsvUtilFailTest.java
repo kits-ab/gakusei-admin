@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class csvUtilFailTest {
+public class QuizCsvUtilFailTest {
 
 
     @Test
