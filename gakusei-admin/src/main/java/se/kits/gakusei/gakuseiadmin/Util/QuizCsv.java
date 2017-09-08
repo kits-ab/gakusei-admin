@@ -16,7 +16,7 @@ public class QuizCsv {
             throw new Exception("Error with headers should be: name, description");
         }
         if(!headers[0].equals("name") || !headers[1].equals("description") ){
-            throw new Exception("Error with headers should be: name, descriptions");
+            throw new Exception("Error with headers should be: name, description");
         }
         for(String[] row : rows){
             if(row.length != 2 && row.length != 1){
