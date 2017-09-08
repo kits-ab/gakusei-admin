@@ -31,7 +31,7 @@ public class Csv {
      * @param file
      * @return Map
      */
-    public Map<String, List<String[]>> parse(MultipartFile file) {
+    public static Map<String, List<String[]>> parse(MultipartFile file) {
 
         CsvParserSettings settings = new CsvParserSettings();
         RowListProcessor rowProcessor = new RowListProcessor();

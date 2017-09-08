@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.gakuseiadmin.Util.Csv;
+import se.kits.gakusei.gakuseiadmin.Util.QuizCsv;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
 import se.kits.gakusei.util.QuestionHandler;
 
@@ -36,27 +37,12 @@ public class QuizAdminController {
     )
     public ResponseEntity<String> importCsv(@RequestParam("file") MultipartFile file) {
 
-        Csv csv = new Csv();
         List<Quiz> quizList = new ArrayList<Quiz>();
-        Map<String, List<String[]>> result = csv.parse(file);
-
-        if (result.containsKey("ERROR")) {
-            System.out.println("First error");
-            return new ResponseEntity<String>(result.get("ERROR").toString(), HttpStatus.BAD_REQUEST);
-        }
-
-        List<String[]> headers = result.get("HEADERS");
-        String[] expectedHeaders = {"name", "description"};
-
-        for (String[] head: headers) {
-            for (int i = 0; i < head.length; i++) {
-                if (!head[i].equals(expectedHeaders[i])) {
-                    return new ResponseEntity<String>(
-                            "Headers need to be in the following order: name, descriptions",
-                            HttpStatus.BAD_REQUEST);
-                }
-            }
-
+        Map<String, List<String[]>> result;
+        try{
+            result = QuizCsv.parse(file);
+        } catch (Exception e){
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         for (String[] value: result.get("ROWS")) {
@@ -70,7 +56,6 @@ public class QuizAdminController {
         try {
             quizRepository.save(quizList);
         } catch(Exception e) {
-            System.out.println("Third error");
             return new ResponseEntity<String>("Could not save to DB", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
