@@ -12,6 +12,7 @@ import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
 import se.kits.gakusei.content.repository.WordTypeRepository;
 import se.kits.gakusei.gakuseiadmin.utility.CSVToDatabase;
+import se.kits.gakusei.gakuseiadmin.utility.ParserFailureException;
 
 import java.util.List;
 
@@ -33,16 +34,19 @@ public class FileUploadController {
     @PostMapping("/api/nugget/import/csv")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file){
 
-        CSVToDatabase parser = new CSVToDatabase(file, lessonRepository, nuggetRepository, wordTypeRepository, bookRepository);
+        CSVToDatabase parser = new CSVToDatabase(file, lessonRepository, wordTypeRepository, bookRepository);
 
-        //try {
+        try {
             List<Nugget> nuggets = parser.parse();
-            return ResponseEntity.ok().body(file.getName() + " was received!");
-        //} catch(ParserFailureException e) {
-        //    return ResponseEntity.badRequest().body(e.getMessage());
-        //}
-
+        } catch (ParserFailureException e){
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
         // TODO : Save parsed nuggets to database
+        // nuggetRepository.save(nuggets);
+
+        return ResponseEntity.ok().body(file.getName() + " was received!");
+
+
 
     }
 
