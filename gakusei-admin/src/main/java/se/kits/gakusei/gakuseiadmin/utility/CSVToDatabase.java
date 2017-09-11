@@ -38,7 +38,7 @@ public class CSVToDatabase {
 
         try {
             parser.parse(file.getInputStream());
-            String[] headers = rowProcessor.getHeaders();
+            String[] headers = rowProcessor.getHeaders(); // TODO : Do something productive with these? Validation?
             List<String[]> rows = rowProcessor.getRows();
 
             return createNuggets(rows);
