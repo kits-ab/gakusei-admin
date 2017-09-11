@@ -31,11 +31,20 @@ public class CSVNugget {
     private final int JP_WRITE_INDEX = 8;
     private final int HIDDEN_INDEX = 9;
 
+    private final int EXPECTED_NUMBER_OF_VALUES = 10;
+
     public CSVNugget(String[] values, LessonRepository lr, BookRepository br, WordTypeRepository wtr){
         this.values = values;
         lessonRepository = lr;
         bookRepository = br;
         wordTypeRepository = wtr;
+        initialCheck();
+    }
+
+    private void initialCheck(){
+        if(values.length != EXPECTED_NUMBER_OF_VALUES){
+            throw new ParserFailureException("Unexpected number of values in row: " + Arrays.toString(values));
+        }
     }
 
     public Nugget getNugget(){
