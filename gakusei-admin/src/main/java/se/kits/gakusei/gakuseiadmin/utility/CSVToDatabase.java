@@ -24,16 +24,14 @@ public class CSVToDatabase {
 
     private MultipartFile file;
 
-
-
-    public CSVToDatabase(MultipartFile f, LessonRepository lr, NuggetRepository nr, WordTypeRepository wr, BookRepository br){
+    public CSVToDatabase(MultipartFile f, LessonRepository lr, WordTypeRepository wr, BookRepository br){
         file = f;
         lessonRepository = lr;
         bookRepository = br;
         wordTypeRepository = wr;
     }
 
-    public List<Nugget> parse() {
+    public List<Nugget> parse(){
 
         RowListProcessor rowProcessor = new RowListProcessor();
         CsvParser parser = setupParser(rowProcessor);
@@ -46,10 +44,9 @@ public class CSVToDatabase {
             return createNuggets(rows);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ParserFailureException("Could not open file: "  + e.getMessage());
         }
 
-        return null;
     }
 
     private List<Nugget> createNuggets(List<String[]> rows){
