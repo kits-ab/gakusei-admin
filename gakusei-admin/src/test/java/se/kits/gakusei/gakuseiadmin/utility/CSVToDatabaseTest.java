@@ -54,20 +54,10 @@ public class CSVToDatabaseTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-
-        Book testBook = new Book();
-        testBook.setTitle("Test title");
-        bookRepository.save(testBook);
-        System.out.println(bookRepository.findByTitle("Test title").getTitle());
-
-        WordType testWordType = new WordType();
-        testWordType.setType("Test type");
-        wordTypeRepository.save(testWordType);
-        System.out.println(wordTypeRepository.findByType("Test type").getType());
     }
 
     @Test
-    public void testUpload() {
+    public void testUploadPass() {
         FileInputStream fip;
 
         try {
@@ -84,9 +74,30 @@ public class CSVToDatabaseTest {
                 e.printStackTrace();
             }
 
-            Nugget nugg = nuggetRepository.findOne("1");
-            System.out.println(nugg);
+        } catch (IOException e){
+            e.printStackTrace();
 
+        }
+
+    }
+
+    @Test
+    public void testUploadFail() {
+        FileInputStream fip;
+
+        try {
+            fip = new FileInputStream(new File("src/test/resources/csv/NuggetCsvShouldFail.csv"));
+
+            MockMultipartFile mpf = new MockMultipartFile("file", fip);
+
+            try {
+                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/nugget/import/csv")
+                        .file(mpf))
+                        .andExpect(status().is(400));
+            } catch (Exception e) {
+                System.err.println("Mock file goof");
+                e.printStackTrace();
+            }
 
         } catch (IOException e){
             e.printStackTrace();
