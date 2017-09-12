@@ -59,20 +59,21 @@ public class QuizAdminHandler extends QuizHandler {
 
         int i = 0;
         for (Object myIncorrectAnswer : myIncorrectAnswers) {
+            String err_key = String.format("IncorrectAnswer%d", i);
             if (!(myIncorrectAnswer instanceof HashMap<?, ?>)) {
-                errors.put(String.format("IncorrectAnswer%d", i), "Wrong type");
+                errors.put(err_key, "Wrong type");
                 continue;
             }
             HashMap<String, Object> myIncorrectAnswer_map = (HashMap<String, Object>) myIncorrectAnswer;
             try {
                 incorrectAnswerValidator.validate(myIncorrectAnswer_map);
             } catch (FormValidator.FormException exc) {
-                errors.put(String.format("IncorrectAnswer%d", i), exc.getErrMap());
+                errors.put(err_key, exc.getErrMap());
             }
-            if (onUpdate) {
+            if (!errors.containsKey(err_key) && onUpdate) {
                 if (!this.incorrectAnswerRepository.existsByIdAndQuizNuggetId(
                         new Long((int) myIncorrectAnswer_map.get(this.QN_ID)), quizNuggetId))
-                    errors.put(String.format("IncorrectAnswer%d", i), "Does not exist");
+                    errors.put(err_key, "Does not exist");
             }
             i++;
         }

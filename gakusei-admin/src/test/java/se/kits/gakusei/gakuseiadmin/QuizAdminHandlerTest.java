@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -56,10 +55,9 @@ public class QuizAdminHandlerTest {
         return quizNugget;
     }
 
-    private IncorrectAnswers generateIncorrectAnswer() {
+    private IncorrectAnswers generateIncorrectAnswer(QuizNugget quizNugget) {
         IncorrectAnswers incorrectAnswers = new IncorrectAnswers();
         incorrectAnswers.setIncorrectAnswer("Incorrect");
-        QuizNugget quizNugget = this.generateQuizNugget(true);
         incorrectAnswers.setQuizNugget(quizNugget);
         incorrectAnswers = this.incorrectAnswerRepository.save(incorrectAnswers);
         return incorrectAnswers;
@@ -93,5 +91,27 @@ public class QuizAdminHandlerTest {
 
         assertTrue(quizNugget.containsKey("id"));
         assertTrue(this.quizNuggetRepository.exists((Long) quizNugget.get("id")));
+    }
+
+    @Test
+    public void testUpdateQuizNugget() throws Exception {
+        QuizNugget quizNugget = this.generateQuizNugget(true);
+        for (int i=0; i<3; i++)
+            this.generateIncorrectAnswer(quizNugget);
+
+        HashMap<String, Object> myQuizNugget = quizAdminHandler.convertQuizNugget(quizNugget);
+        myQuizNugget.put(quizAdminHandler.QN_CORRECT_ANSWER, "Gakusei");
+
+        // CONVERT LONG TO INT
+        myQuizNugget.put(quizAdminHandler.QN_ID,((Long) myQuizNugget.get(quizAdminHandler.QN_ID)).intValue());
+        myQuizNugget.put(quizAdminHandler.QN_QUIZ_REF,((Long) myQuizNugget.get(quizAdminHandler.QN_QUIZ_REF)).intValue());
+        for (HashMap<String, Object> myIncorrectAnswer : (List<HashMap>) myQuizNugget.get(quizAdminHandler.QN_INCORRECT_ANSWERS))
+            myIncorrectAnswer.put(quizAdminHandler.IA_ID,((Long) myIncorrectAnswer.get(quizAdminHandler.IA_ID)).intValue());
+
+        try {
+            quizAdminHandler.updateAndValidateQuizNugget(myQuizNugget);
+        } catch (Exception exc) {
+            assert false;
+        }
     }
 }
