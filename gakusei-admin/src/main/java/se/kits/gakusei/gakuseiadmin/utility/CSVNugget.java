@@ -87,8 +87,6 @@ public class CSVNugget {
         // List of lessons is comma-separated
         String[] listOfStringLessons = s.split(",");
 
-        System.out.println(Arrays.toString(listOfStringLessons));
-
         for(String stringLesson : listOfStringLessons){
             String trimmed = stringLesson.trim();
             Lesson l = lessonRepository.findByName(trimmed);
