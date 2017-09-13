@@ -70,7 +70,7 @@ public class FileUploadControllerTest {
     public void testBasicCSVNugget(){
 
         try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCsvShouldPass.csv")));
+            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldPass001.csv")));
 
             ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
 
@@ -84,7 +84,7 @@ public class FileUploadControllerTest {
     public void testBasicFailingCSVNugget(){
 
         try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCsvShouldFail.csv")));
+            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSvShouldFail001.csv")));
 
             ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
 
