@@ -68,62 +68,37 @@ public class FileUploadControllerTest {
 
     @Test
     public void testBasicCSVNugget(){
-
-        try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldPass001.csv")));
-
-            ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
-
-            assertEquals(200, re.getStatusCodeValue());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        runPassingTest("001");
     }
 
     @Test
     public void testNuggetWithSeveralLessons(){
-        try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldPass002.csv")));
-
-            ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
-
-            assertEquals(200, re.getStatusCodeValue());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        runPassingTest("002");
     }
 
     @Test
     public void testManyInputs(){
-        try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldPass003.csv")));
-
-            ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
-
-            assertEquals(200, re.getStatusCodeValue());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        runPassingTest("003");
     }
 
     @Test
     public void testBasicFailingCSVNugget(){
-
-        try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldFail001.csv")));
-
-            ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
-
-            assertEquals(400, re.getStatusCodeValue());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        runFailingTest("001");
     }
 
     @Test
     public void testWrongBookNugget(){
+        runFailingTest("002");
+    }
+
+    @Test
+    public void testManyInputsOneFaulty(){
+        runFailingTest("003");
+    }
+
+    private void runFailingTest(String fileID){
         try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldFail002.csv")));
+            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldFail" + fileID + ".csv")));
 
             ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
 
@@ -133,14 +108,13 @@ public class FileUploadControllerTest {
         }
     }
 
-    @Test
-    public void testManyInputsOneFaulty(){
+    private void runPassingTest(String fileID){
         try {
-            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldFail003.csv")));
+            MockMultipartFile mpf = new MockMultipartFile("file", new FileInputStream(new File("src/test/resources/csv/NuggetCSVShouldPass" + fileID + ".csv")));
 
             ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
 
-            assertEquals(400, re.getStatusCodeValue());
+            assertEquals(200, re.getStatusCodeValue());
         } catch (IOException e) {
             e.printStackTrace();
         }
