@@ -45,10 +45,7 @@ public class FileUploadController {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
-
-
-
-
+        
     }
 
 }
