@@ -38,13 +38,14 @@ public class FileUploadController {
 
         try {
             List<Nugget> nuggets = parser.parse();
+            nuggetRepository.save(nuggets);
+
+            return ResponseEntity.ok().body(file.getName() + " was received!");
         } catch (ParserFailureException e){
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
-        // TODO : Save parsed nuggets to database
-        // nuggetRepository.save(nuggets);
 
-        return ResponseEntity.ok().body(file.getName() + " was received!");
 
 
 

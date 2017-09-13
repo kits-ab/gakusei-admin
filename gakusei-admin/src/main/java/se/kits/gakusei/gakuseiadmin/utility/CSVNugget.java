@@ -43,7 +43,8 @@ public class CSVNugget {
 
     private void initialCheck(){
         if(values.length != EXPECTED_NUMBER_OF_VALUES){
-            throw new ParserFailureException("Unexpected number of values in row: " + Arrays.toString(values));
+            throw new ParserFailureException("Unexpected number of values in row: " + Arrays.toString(values)
+                                            + "\nExpected " + EXPECTED_NUMBER_OF_VALUES + " but got " + values.length);
         }
     }
 
@@ -66,8 +67,14 @@ public class CSVNugget {
     }
 
     private WordType createWordType(String s){
-        return new WordType();
-        // return wordTypeRepository.findByType(s); TODO : Make sure this works with repository/database
+        WordType wt = wordTypeRepository.findByType(s);
+
+        if(wt != null) {
+            return wordTypeRepository.findByType(s);
+        } else {
+            throw new ParserFailureException("Invalid word type \"" + s + "\" in row: " + Arrays.toString(values)
+                                            + "\nWord type does not exist in database");
+        }
     }
 
     private boolean createBoolean(String s){
@@ -84,15 +91,25 @@ public class CSVNugget {
 
         for(String stringLesson : listOfStringLessons){
             String trimmed = stringLesson.trim();
-            // Lesson l = lessonRepository.findByName(trimmed); TODO : Make sure this works with repository/database
-            lessons.add(new Lesson());
+            Lesson l = lessonRepository.findByName(trimmed);
+            if(l != null) {
+                lessons.add(l);
+            } else {
+                throw new ParserFailureException("Invalid lesson \"" + trimmed + "\" in row: " + Arrays.toString(values)
+                                                + "\nLesson does not exist in database");
+            }
         }
 
         return lessons;
     }
 
     private Book createBookTitle(String s){
-        return new Book();
-        // return bookRepository.findByTitle(s); TODO : Make sure this works with repository/database
+        Book book = bookRepository.findByTitle(s);
+        if(book != null) {
+            return bookRepository.findByTitle(s);
+        } else {
+            throw new ParserFailureException("Invalid book \"" + s + "\" in row: " + Arrays.toString(values)
+                                            + "\nBook does not exist in database");
+        }
     }
 }
