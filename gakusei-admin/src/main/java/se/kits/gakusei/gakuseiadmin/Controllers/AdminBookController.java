@@ -19,18 +19,18 @@ public class AdminBookController extends BookController {
     BookRepository bookRepository;
 
     @RequestMapping(
-        value = "/api/books/{title}/update",
+        value = "/api/books/{oldTitle}/update/{newTitle}",
         method = RequestMethod.PUT,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Book> updateBookTitle(@PathVariable(value = "title") String title){
-        Book toBeUpdated = bookRepository.findByTitle(title);
+    public ResponseEntity<Book> updateBookTitle(@PathVariable(value = "oldTitle") String oldTitle, @PathVariable(value = "newTitle") String newTitle){
+        Book toBeUpdated = bookRepository.findByTitle(oldTitle);
 
         if(toBeUpdated == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        toBeUpdated.setTitle(title);
+        toBeUpdated.setTitle(newTitle);
         return new ResponseEntity<>(bookRepository.save(toBeUpdated), HttpStatus.OK); // Automagically updates current book
     }
 
