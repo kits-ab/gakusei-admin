@@ -48,7 +48,7 @@ public class AdminBookController extends BookController {
         Book newBook = new Book();
         newBook.setTitle(title);
 
-        return new ResponseEntity<>(bookRepository.save(newBook), HttpStatus.OK);
+        return new ResponseEntity<>(bookRepository.save(newBook), HttpStatus.CREATED);
     }
 
     @RequestMapping(
