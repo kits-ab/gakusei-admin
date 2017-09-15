@@ -24,6 +24,9 @@ spring:
 gakusei:
   data-init: true
 
+liquibase:
+      enabled: false
+
 ---
 
 spring:
@@ -34,9 +37,16 @@ spring:
     password: gakusei
     driver-class-name: org.postgresql.Driver
 
+liquibase:
+      #change-log: classpath:/db/db.changelog-master.yaml
+      enabled: false
+
 ---
 
 spring:
   profiles: enable-resource-caching
   caching: true
 
+
+server:
+  port: 8090
