@@ -11,7 +11,7 @@ import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
-import se.kits.gakusei.content.repository.WordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
 import se.kits.gakusei.gakuseiadmin.utility.CSVToDatabase;
 import se.kits.gakusei.gakuseiadmin.utility.ParserFailureException;
 

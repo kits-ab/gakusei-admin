@@ -7,8 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
-import se.kits.gakusei.content.repository.NuggetRepository;
-import se.kits.gakusei.content.repository.WordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;

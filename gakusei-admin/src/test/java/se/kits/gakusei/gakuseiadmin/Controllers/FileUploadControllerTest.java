@@ -18,7 +18,7 @@ import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
-import se.kits.gakusei.content.repository.WordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
