@@ -22,7 +22,7 @@ spring:
       ddl-auto: update
 
 gakusei:
-  data-init: true
+  data-init: false
 
 liquibase:
       enabled: false

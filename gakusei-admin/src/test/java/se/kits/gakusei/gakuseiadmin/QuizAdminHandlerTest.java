@@ -82,7 +82,7 @@ public class QuizAdminHandlerTest {
     @Test
     public void testCreateQuizNugget() throws Exception {
         HashMap<String, Object> quizNugget = null;
-        quizNugget = quizAdminHandler.createAndValidateQuizNugget(this.constructQuizNugget());
+
         try {
             quizNugget = quizAdminHandler.createAndValidateQuizNugget(this.constructQuizNugget());
         } catch (Exception exc) {
