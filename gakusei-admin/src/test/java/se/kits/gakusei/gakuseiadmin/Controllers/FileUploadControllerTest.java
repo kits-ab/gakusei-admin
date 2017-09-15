@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -102,7 +103,7 @@ public class FileUploadControllerTest {
 
             ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
 
-            assertEquals(400, re.getStatusCodeValue());
+            assertEquals(HttpStatus.BAD_REQUEST, re.getStatusCode());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,7 +115,7 @@ public class FileUploadControllerTest {
 
             ResponseEntity<String> re = fileUploadController.handleFileUpload(mpf);
 
-            assertEquals(200, re.getStatusCodeValue());
+            assertEquals(HttpStatus.CREATED, re.getStatusCode());
         } catch (IOException e) {
             e.printStackTrace();
         }
