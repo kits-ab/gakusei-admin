@@ -42,7 +42,7 @@ public class AdminBookController extends BookController {
     public ResponseEntity<Book> createNewBook(@PathVariable(value = "title") String title){
 
         if(bookRepository.findByTitle(title) != null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         Book newBook = new Book();
