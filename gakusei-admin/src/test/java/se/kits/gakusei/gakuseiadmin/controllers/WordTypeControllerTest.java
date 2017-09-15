@@ -107,8 +107,8 @@ public class WordTypeControllerTest {
     @Test
     public void testUpdateWordTypeOK() {
         when(wordTypeRepository.findByType(type)).thenReturn(wordType);
-        when(wordTypeRepository.save(any(WordType.class))).thenReturn(null);
         wordType.setType(newType);
+        when(wordTypeRepository.save(wordType)).thenReturn(wordType);
 
         ResponseEntity<WordType> re = wordTypeController.updateWordType(type, newType);
 

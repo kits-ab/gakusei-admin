@@ -38,7 +38,7 @@ public class WordTypeController {
     )
     public ResponseEntity<Iterable<WordType>> getWordTypes() {
         Iterable<WordType> types = wordTypeRepository.findAll();
-        return new ResponseEntity(types, HttpStatus.OK);
+        return new ResponseEntity<>(types, HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -49,10 +49,10 @@ public class WordTypeController {
     public ResponseEntity<WordType> getWordType(@PathVariable(value="type") String type) {
         WordType wordType = wordTypeRepository.findByType(type);
         if (wordType != null) {
-            return new ResponseEntity(wordType, HttpStatus.OK);
+            return new ResponseEntity<>(wordType, HttpStatus.OK);
         }
 
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(
@@ -63,11 +63,10 @@ public class WordTypeController {
         WordType wordType = wordTypeRepository.findByType(oldType);
         if (wordType != null) {
             wordType.setType(newType);
-            wordTypeRepository.save(wordType);
-            return new ResponseEntity(wordType, HttpStatus.OK);
+            return new ResponseEntity<>(wordTypeRepository.save(wordType), HttpStatus.OK);
         }
 
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(
@@ -78,9 +77,9 @@ public class WordTypeController {
         WordType wordType = wordTypeRepository.findByType(type);
         if (wordType != null) {
             wordTypeRepository.delete(wordType);
-            return ResponseEntity.ok().build();
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
