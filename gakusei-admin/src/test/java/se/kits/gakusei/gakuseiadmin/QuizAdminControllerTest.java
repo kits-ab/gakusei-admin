@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.util.List;
 
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -45,11 +47,17 @@ public class QuizAdminControllerTest {
     @InjectMocks
     private QuizAdminController adminQuizController;
 
+    private Quiz testQuiz;
+
     @Before
     public void setUp() throws Exception {
         adminQuizController = new QuizAdminController();
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+
+        testQuiz = new Quiz();
+        testQuiz.setName("Test quiz");
+        testQuiz.setDescription("Test description");
     }
 
     @Test
@@ -73,11 +81,15 @@ public class QuizAdminControllerTest {
 
             List<Quiz> testQuiz = adminQuizRepository.findAll();
 
-            int counter = 1;
-            for (Quiz quiz: testQuiz) {
-                Assert.assertEquals("test"+ counter, quiz.getName());
-                Assert.assertEquals("desc_test"+ counter, quiz.getDescription());
-                counter++;
+            for (int counter=1; counter<4; counter++) {
+                boolean exists = false;
+                for (Quiz quiz: testQuiz) {
+                    if (quiz.getName().equals("test"+counter) && quiz.getDescription().equals("desc_test"+ counter)) {
+                        exists = true;
+                        break;
+                    }
+                }
+                Assert.assertEquals(true, exists);
             }
 
 
@@ -90,4 +102,48 @@ public class QuizAdminControllerTest {
 
     }
 
+    @Test
+    public void testCreateQuiz() {
+        String quizString = "{ \"name\": \"Test quiz\", \"description\": \"Test description\"}";
+
+        try {
+            mockMvc.perform(post("/api/quiz/create")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(quizString))
+                    .andExpect(status().isOk());
+        } catch (Exception exc) { }
+
+        List<Quiz> quizLs = this.adminQuizRepository.findByName(this.testQuiz.getName());
+        Assert.assertTrue(quizLs.size()>0);
+    }
+
+    @Test
+    public void testUpdateQuiz() {
+        Quiz quiz = this.adminQuizRepository.save(this.testQuiz);
+        String quizString = String.format("{ \"id\": \"%d\", \"name\": \"Test quiz\", \"description\": \"Test description NEW\"}",
+                quiz.getId());
+
+        try {
+            mockMvc.perform(put("/api/quiz/update")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(quizString))
+                    .andExpect(status().isOk());
+        } catch (Exception exc) { }
+
+        Quiz quiz1 = this.adminQuizRepository.findOne(quiz.getId());
+        Assert.assertEquals(quiz.getId(), quiz1.getId());
+        Assert.assertEquals(quiz.getDescription()+" NEW", quiz1.getDescription());
+    }
+
+    @Test
+    public void testDeleteQuiz() {
+        Quiz quiz = this.adminQuizRepository.save(this.testQuiz);
+
+        try {
+            mockMvc.perform(delete(String.format("/api/quiz/%d/delete", quiz.getId())))
+                    .andExpect(status().isOk());
+        } catch (Exception exc) { }
+
+        Assert.assertEquals(false, this.adminQuizRepository.exists(this.testQuiz.getId()));
+    }
 }
