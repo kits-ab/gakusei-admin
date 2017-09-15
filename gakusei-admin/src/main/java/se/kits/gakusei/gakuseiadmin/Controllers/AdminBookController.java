@@ -27,7 +27,7 @@ public class AdminBookController extends BookController {
         Book toBeUpdated = bookRepository.findByTitle(oldTitle);
 
         if(toBeUpdated == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         toBeUpdated.setTitle(newTitle);
@@ -42,7 +42,7 @@ public class AdminBookController extends BookController {
     public ResponseEntity<Book> createNewBook(@PathVariable(value = "title") String title){
 
         if(bookRepository.findByTitle(title) != null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Book newBook = new Book();
@@ -60,7 +60,7 @@ public class AdminBookController extends BookController {
         Book toBeDeleted = bookRepository.findByTitle(title);
 
         if(toBeDeleted == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         bookRepository.delete(toBeDeleted);
