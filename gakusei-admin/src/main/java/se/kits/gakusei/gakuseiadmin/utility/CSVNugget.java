@@ -70,7 +70,7 @@ public class CSVNugget {
         WordType wt = wordTypeRepository.findByType(s);
 
         if(wt != null) {
-            return wordTypeRepository.findByType(s);
+            return wt;
         } else {
             throw new ParserFailureException("Invalid word type \"" + s + "\" in row: " + Arrays.toString(values)
                                             + "\nWord type does not exist in database");
@@ -104,7 +104,7 @@ public class CSVNugget {
     private Book createBookTitle(String s){
         Book book = bookRepository.findByTitle(s);
         if(book != null) {
-            return bookRepository.findByTitle(s);
+            return book;
         } else {
             throw new ParserFailureException("Invalid book \"" + s + "\" in row: " + Arrays.toString(values)
                                             + "\nBook does not exist in database");

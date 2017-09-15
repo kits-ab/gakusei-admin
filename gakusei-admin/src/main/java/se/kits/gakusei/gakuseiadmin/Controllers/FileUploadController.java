@@ -1,6 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,9 +41,9 @@ public class FileUploadController {
             List<Nugget> nuggets = parser.parse();
             nuggetRepository.save(nuggets);
 
-            return ResponseEntity.ok().body(file.getName() + " was received!");
+            return new ResponseEntity<>(file.getName() + " was received!", HttpStatus.CREATED);
         } catch (ParserFailureException e){
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }
