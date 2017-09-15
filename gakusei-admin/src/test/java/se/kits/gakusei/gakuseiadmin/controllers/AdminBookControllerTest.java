@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.repository.BookRepository;
@@ -50,7 +51,7 @@ public class AdminBookControllerTest {
 
         ResponseEntity<Book> re = adminBookController.updateBookTitle(title, newTitle);
 
-        assertEquals(200, re.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, re.getStatusCode());
         assertEquals(testBook, re.getBody());
     }
 
@@ -60,7 +61,7 @@ public class AdminBookControllerTest {
 
         ResponseEntity<Book> re = adminBookController.updateBookTitle(invalidTitle, newTitle);
 
-        assertEquals(400, re.getStatusCodeValue());
+        assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
     }
 
     @Test
@@ -70,7 +71,7 @@ public class AdminBookControllerTest {
 
         ResponseEntity<Book> re = adminBookController.createNewBook(title);
 
-        assertEquals(200, re.getStatusCodeValue());
+        assertEquals(HttpStatus.CREATED, re.getStatusCode());
         assertEquals(testBook, re.getBody());
     }
 
@@ -80,7 +81,7 @@ public class AdminBookControllerTest {
 
         ResponseEntity<Book> re = adminBookController.createNewBook(invalidTitle);
 
-        assertEquals(400, re.getStatusCodeValue());
+        assertEquals(HttpStatus.BAD_REQUEST, re.getStatusCode());
     }
 
     @Test
@@ -89,7 +90,7 @@ public class AdminBookControllerTest {
 
         ResponseEntity<Book> re = adminBookController.deleteBook(title);
 
-        assertEquals(200, re.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, re.getStatusCode());
     }
 
     @Test
@@ -98,7 +99,7 @@ public class AdminBookControllerTest {
 
         ResponseEntity<Book> re = adminBookController.deleteBook(invalidTitle);
 
-        assertEquals(400, re.getStatusCodeValue());
+        assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
     }
 
 }
