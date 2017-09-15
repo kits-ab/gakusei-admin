@@ -13,7 +13,7 @@ import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.controller.BookController;
 
 @RestController
-public class AdminBookController extends BookController {
+public class AdminBookController {
 
     @Autowired
     BookRepository bookRepository;
