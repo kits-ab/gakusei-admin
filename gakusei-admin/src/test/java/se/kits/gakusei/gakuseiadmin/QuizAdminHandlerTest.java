@@ -1,4 +1,4 @@
-package se.kits.gakusei.util;
+package se.kits.gakusei.gakuseiadmin;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,7 @@ import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
-import se.kits.gakusei.gakuseiadmin.Util.QuizAdminHandler;
+import se.kits.gakusei.gakuseiadmin.util.QuizAdminHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;

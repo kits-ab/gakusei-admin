@@ -7,8 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
-import se.kits.gakusei.gakuseiadmin.Util.Csv;
-import se.kits.gakusei.gakuseiadmin.Util.QuizCsv;
+import se.kits.gakusei.gakuseiadmin.util.QuizCsv;
 
 import java.io.File;
 import java.io.FileInputStream;

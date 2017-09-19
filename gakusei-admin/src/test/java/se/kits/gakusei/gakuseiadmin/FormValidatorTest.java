@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.repository.QuizRepository;
-import se.kits.gakusei.gakuseiadmin.Util.FormValidator;
+import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
