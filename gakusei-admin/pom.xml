@@ -124,7 +124,7 @@
                         <version>1.5</version>
                         <configuration>
                             <nodeVersion>v8.4.0</nodeVersion>
-                            <workingDirectory>${pathToFE}</workingDirectory>
+                            <workingDirectory>${frontend}</workingDirectory>
                         </configuration>
                         <executions>
                             <execution>
@@ -158,7 +158,7 @@
                 </plugins>
                 <resources>
                     <resource>
-                        <directory>${pathToFE}/src/main/resources</directory>
+                        <directory>${frontend}/src/main/resources</directory>
                     </resource>
                 </resources>
 			</build>
