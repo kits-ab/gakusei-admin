@@ -4,6 +4,8 @@ import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -154,5 +156,34 @@ public class QuizAdminController {
         HashMap<String, Object> newMyQuizNugget = null;
         this.quizNuggetRepository.delete(quizNuggetId);
         return new ResponseEntity(null, HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "/api/quizes/{offset}/{name}",
+            method = RequestMethod.GET
+    )
+    public ResponseEntity<List<Quiz>> getQuizesByName(HttpServletRequest request, @PathVariable(value="name") String name,
+                                    @PathVariable(value="offset") int offset) {
+        Pageable pageRequest;
+        if (offset < 0)
+            pageRequest = new PageRequest(0, 10);
+        else
+            pageRequest = new PageRequest(offset, 10);
+
+        return new ResponseEntity(quizRepository.findByNameContains(name, pageRequest), HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "/api/quizes/{offset}",
+            method = RequestMethod.GET
+    )
+    public ResponseEntity<List<Quiz>> getQuizes(HttpServletRequest request, @PathVariable(value="offset") int offset) {
+        Pageable pageRequest;
+        if (offset < 0)
+            pageRequest = new PageRequest(0, 10);
+        else
+            pageRequest = new PageRequest(offset, 10);
+
+        return new ResponseEntity(quizRepository.findAll(pageRequest).getContent(), HttpStatus.OK);
     }
 }
