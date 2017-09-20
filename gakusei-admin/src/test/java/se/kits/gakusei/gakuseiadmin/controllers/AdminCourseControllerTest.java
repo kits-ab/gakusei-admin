@@ -48,10 +48,16 @@ public class AdminCourseControllerTest {
 
     @Test
     public void updateCourse() throws Exception {
+
     }
 
     @Test
     public void deleteCourse() throws Exception {
+        Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
+
+        ResponseEntity<Course> re = adminCourseController.deleteCourse(testCourse.getId());
+
+        assertEquals(HttpStatus.OK, re.getStatusCode());
     }
 
 }
