@@ -24,7 +24,7 @@ public class AdminCourseController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(adminCourseRepository.save(course), HttpStatus.OK);
+        return new ResponseEntity<>(adminCourseRepository.save(course), HttpStatus.CREATED);
     }
 
     @RequestMapping(
@@ -46,6 +46,11 @@ public class AdminCourseController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Course> deleteCourse(@PathVariable(value = "courseID") Long courseID){
-        return null;
+        if(adminCourseRepository.exists(courseID)){
+            adminCourseRepository.delete(courseID);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
