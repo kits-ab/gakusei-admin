@@ -1,5 +1,6 @@
 package se.kits.gakusei.gakuseiadmin.tools;
 
+import se.kits.gakusei.content.model.Course;
 import se.kits.gakusei.content.model.WordType;
 
 import java.util.ArrayList;
@@ -14,5 +15,11 @@ public class AdminTestTools {
         }
 
         return wordTypes;
+    }
+
+    public static Course createCourse(){
+        Course course = new Course();
+        course.setName("Test course");
+        return course;
     }
 }
