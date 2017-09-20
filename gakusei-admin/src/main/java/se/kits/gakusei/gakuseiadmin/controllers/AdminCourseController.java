@@ -3,9 +3,7 @@ package se.kits.gakusei.gakuseiadmin.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.content.model.Course;
 import se.kits.gakusei.gakuseiadmin.content.AdminCourseRepository;
 
@@ -20,7 +18,7 @@ public class AdminCourseController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Course> createCourse(){
+    public ResponseEntity<Course> createCourse(@RequestBody Course course){
         return null;
     }
 
@@ -29,7 +27,7 @@ public class AdminCourseController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Course> updateCourse(){
+    public ResponseEntity<Course> updateCourse(@RequestBody Course course){
         return null;
     }
 
@@ -38,7 +36,7 @@ public class AdminCourseController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Course> deleteCourse(){
+    public ResponseEntity<Course> deleteCourse(@PathVariable(value = "courseID") Long courseID){
         return null;
     }
 }
