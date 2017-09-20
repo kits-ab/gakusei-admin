@@ -35,7 +35,7 @@ public class AdminCourseControllerTest {
     }
 
     @Test
-    public void createCourse() throws Exception {
+    public void testCreateCourseOK() throws Exception {
         Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(false);
         Mockito.when(courseRepository.save(testCourse)).thenReturn(testCourse);
 
@@ -47,7 +47,7 @@ public class AdminCourseControllerTest {
     }
 
     @Test
-    public void updateCourse() throws Exception {
+    public void testUpdateCourseOK() throws Exception {
         Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
         testCourse.setName("Updated name");
         Mockito.when(courseRepository.save(testCourse)).thenReturn(testCourse);
@@ -60,7 +60,7 @@ public class AdminCourseControllerTest {
     }
 
     @Test
-    public void deleteCourse() throws Exception {
+    public void testeDeleteCourseOK() throws Exception {
         Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
 
         ResponseEntity<Course> re = adminCourseController.deleteCourse(testCourse.getId());
