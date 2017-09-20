@@ -6,13 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.content.model.Course;
-import se.kits.gakusei.gakuseiadmin.content.AdminCourseRepository;
+import se.kits.gakusei.content.repository.CourseRepository;
 
 @RestController
 public class AdminCourseController {
 
     @Autowired
-    AdminCourseRepository adminCourseRepository;
+    CourseRepository courseRepository;
 
     @RequestMapping(
             value = "api/courses/create",
@@ -20,11 +20,11 @@ public class AdminCourseController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Course> createCourse(@RequestBody Course course){
-        if(adminCourseRepository.exists(course.getId())){
+        if(courseRepository.exists(course.getId())){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(adminCourseRepository.save(course), HttpStatus.CREATED);
+        return new ResponseEntity<>(courseRepository.save(course), HttpStatus.CREATED);
     }
 
     @RequestMapping(
@@ -33,8 +33,8 @@ public class AdminCourseController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Course> updateCourse(@RequestBody Course course){
-        if(adminCourseRepository.exists(course.getId())){
-            return new ResponseEntity<>(adminCourseRepository.save(course), HttpStatus.OK);
+        if(courseRepository.exists(course.getId())){
+            return new ResponseEntity<>(courseRepository.save(course), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -46,8 +46,8 @@ public class AdminCourseController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Course> deleteCourse(@PathVariable(value = "courseID") Long courseID){
-        if(adminCourseRepository.exists(courseID)){
-            adminCourseRepository.delete(courseID);
+        if(courseRepository.exists(courseID)){
+            courseRepository.delete(courseID);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
