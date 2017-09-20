@@ -48,6 +48,14 @@ public class AdminCourseControllerTest {
 
     @Test
     public void updateCourse() throws Exception {
+        Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
+        testCourse.setName("Updated name");
+        Mockito.when(courseRepository.save(testCourse)).thenReturn(testCourse);
+
+        ResponseEntity<Course> re = adminCourseController.updateCourse(testCourse);
+
+        assertEquals(HttpStatus.OK, re.getStatusCode());
+        assertEquals(testCourse, re.getBody());
 
     }
 
