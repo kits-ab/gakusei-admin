@@ -60,7 +60,7 @@ public class AdminCourseControllerTest {
     }
 
     @Test
-    public void testeDeleteCourseOK() throws Exception {
+    public void testDeleteCourseOK() throws Exception {
         Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
 
         ResponseEntity<Course> re = adminCourseController.deleteCourse(testCourse.getId());
