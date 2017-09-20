@@ -33,7 +33,11 @@ public class AdminCourseController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Course> updateCourse(@RequestBody Course course){
-        return null;
+        if(adminCourseRepository.exists(course.getId())){
+            return new ResponseEntity<>(adminCourseRepository.save(course), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(
