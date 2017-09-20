@@ -47,6 +47,15 @@ public class AdminCourseControllerTest {
     }
 
     @Test
+    public void testCreateCourseBadRequest() {
+        Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
+
+        ResponseEntity<Course> re = adminCourseController.createCourse(testCourse);
+
+        assertEquals(HttpStatus.BAD_REQUEST, re.getStatusCode());
+    }
+
+    @Test
     public void testUpdateCourseOK() throws Exception {
         Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
         testCourse.setName("Updated name");
