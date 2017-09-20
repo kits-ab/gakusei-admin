@@ -5,8 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import se.kits.gakusei.content.model.Course;
 import se.kits.gakusei.content.repository.CourseRepository;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
@@ -27,12 +30,20 @@ public class AdminCourseControllerTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        
+
         testCourse = AdminTestTools.createCourse();
     }
 
     @Test
     public void createCourse() throws Exception {
+        Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(false);
+        Mockito.when(courseRepository.save(testCourse)).thenReturn(testCourse);
+
+        ResponseEntity<Course> re = adminCourseController.createCourse(testCourse);
+
+        assertEquals(HttpStatus.CREATED, re.getStatusCode());
+        assertEquals(testCourse, re.getBody());
+
     }
 
     @Test
