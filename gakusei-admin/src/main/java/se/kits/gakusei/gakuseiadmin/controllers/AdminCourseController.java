@@ -1,6 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,11 @@ public class AdminCourseController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Course> createCourse(@RequestBody Course course){
-        return null;
+        if(adminCourseRepository.exists(course.getId())){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(adminCourseRepository.save(course), HttpStatus.OK);
     }
 
     @RequestMapping(
