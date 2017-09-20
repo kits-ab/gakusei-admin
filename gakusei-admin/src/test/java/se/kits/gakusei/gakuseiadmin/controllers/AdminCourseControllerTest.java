@@ -69,6 +69,15 @@ public class AdminCourseControllerTest {
     }
 
     @Test
+    public void testUpdateCourseNotFound() {
+        Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(false);
+
+        ResponseEntity<Course> re = adminCourseController.updateCourse(testCourse);
+
+        assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
+    }
+
+    @Test
     public void testDeleteCourseOK() throws Exception {
         Mockito.when(courseRepository.exists(testCourse.getId())).thenReturn(true);
 
