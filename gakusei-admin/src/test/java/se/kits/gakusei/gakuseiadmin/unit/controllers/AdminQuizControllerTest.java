@@ -62,9 +62,9 @@ public class AdminQuizControllerTest {
             MockMultipartFile mpf = new MockMultipartFile("file", fip);
 
             try {
-                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/quiz/import/csv")
+                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/quizes/csv")
                         .file(mpf))
-                        .andExpect(status().is(200));
+                        .andExpect(status().isCreated());
             } catch (Exception e) {
                 System.err.println("[-] Could not mock file");
                 e.printStackTrace();
@@ -98,10 +98,10 @@ public class AdminQuizControllerTest {
         String quizString = "{ \"name\": \"Test quiz\", \"description\": \"Test description\"}";
 
         try {
-            mockMvc.perform(post("/api/quiz/create")
-                    .contentType(MediaType.APPLICATION_JSON)
+            mockMvc.perform(post("/api/quizes")
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(quizString))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         } catch (Exception exc) { }
 
         List<Quiz> quizLs = adminQuizRepository.findByName(testQuiz.getName());
@@ -115,8 +115,8 @@ public class AdminQuizControllerTest {
                 quiz.getId());
 
         try {
-            mockMvc.perform(put("/api/quiz/update")
-                    .contentType(MediaType.APPLICATION_JSON)
+            mockMvc.perform(put(String.format("/api/quizes"))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(quizString))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
@@ -131,7 +131,7 @@ public class AdminQuizControllerTest {
         Quiz quiz = adminQuizRepository.save(testQuiz);
 
         try {
-            mockMvc.perform(delete(String.format("/api/quiz/%d/delete", quiz.getId())))
+            mockMvc.perform(delete(String.format("/api/quizes/%d", quiz.getId())))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
