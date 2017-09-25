@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
-import se.kits.gakusei.gakuseiadmin.util.CSVQuiz;
+import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
 import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;

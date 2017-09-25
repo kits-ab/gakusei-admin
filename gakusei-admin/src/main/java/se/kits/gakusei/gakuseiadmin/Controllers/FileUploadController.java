@@ -12,7 +12,7 @@ import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
-import se.kits.gakusei.gakuseiadmin.util.CSVToDatabase;
+import se.kits.gakusei.gakuseiadmin.util.csv.CSVToDatabase;
 import se.kits.gakusei.gakuseiadmin.util.ParserFailureException;
 
 import java.util.List;
