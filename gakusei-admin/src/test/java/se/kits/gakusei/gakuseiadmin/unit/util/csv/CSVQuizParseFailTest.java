@@ -30,7 +30,7 @@ public class CSVQuizParseFailTest {
             fip = new FileInputStream(new File("src/test/resources/csv/QuizRowShouldFail.csv"));
             MultipartFile mpf = new MockMultipartFile("file", fip);
             try {
-                Map<String, List<String[]>> result = QuizCSV.parse(mpf);
+                Map<String, List<String[]>> result = CSVQuiz.parse(mpf);
                 Assert.fail();
             } catch (Exception e){
                 Assert.assertTrue(true);
@@ -52,7 +52,7 @@ public class CSVQuizParseFailTest {
             fip = new FileInputStream(new File("src/test/resources/csv/QuizHeaderShouldFail.csv"));
             MultipartFile mpf = new MockMultipartFile("file", fip);
             try {
-                Map<String, List<String[]>> result = QuizCSV.parse(mpf);
+                Map<String, List<String[]>> result = CSVQuiz.parse(mpf);
                 Assert.fail();
             } catch (Exception e){
                 Assert.assertTrue(true);
