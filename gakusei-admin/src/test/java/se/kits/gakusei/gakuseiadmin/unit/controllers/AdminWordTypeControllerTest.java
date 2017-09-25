@@ -33,6 +33,7 @@ public class AdminWordTypeControllerTest {
     private String newType;
     private Iterable<WordType> wordTypes;
     private WordType wordType;
+    private WordType updatedType;
 
 
     @Before
@@ -52,9 +53,9 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testGetWordTypeOK() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(wordType);
+        when(adminWordTypeRepository.findOne(wordType.getId())).thenReturn(wordType);
 
-        ResponseEntity<WordType> re = adminWordTypeController.getWordType(type);
+        ResponseEntity<WordType> re = adminWordTypeController.getWordType(wordType.getId());
 
         assertEquals(HttpStatus.OK, re.getStatusCode());
         assertEquals(wordType, re.getBody());
@@ -73,9 +74,9 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testGetWordTypeNotFound() {
-        when(adminWordTypeRepository.findByType(newType)).thenReturn(null);
+        when(adminWordTypeRepository.findOne(wordType.getId())).thenReturn(null);
 
-        ResponseEntity<WordType> re = adminWordTypeController.getWordType(newType);
+        ResponseEntity<WordType> re = adminWordTypeController.getWordType(wordType.getId());
 
         assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
         assertEquals(null, re.getBody());
@@ -106,22 +107,21 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testUpdateWordTypeOK() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(wordType);
-        wordType.setType(newType);
-        when(adminWordTypeRepository.save(wordType)).thenReturn(wordType);
+        when(adminWordTypeRepository.exists(updatedType.getId())).thenReturn(true);
+        when(adminWordTypeRepository.save(updatedType)).thenReturn(updatedType);
 
-        ResponseEntity<WordType> re = adminWordTypeController.updateWordType(type, newType);
+        ResponseEntity<WordType> re = adminWordTypeController.updateWordType(updatedType);
 
         assertEquals(HttpStatus.OK, re.getStatusCode());
-        assertEquals(wordType, re.getBody());
+        assertEquals(updatedType, re.getBody());
 
     }
 
     @Test
     public void testUpdateWordTypeNotFound() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(null);
+        when(adminWordTypeRepository.exists(wordType.getId())).thenReturn(false);
 
-        ResponseEntity<WordType> re = adminWordTypeController.updateWordType(type, newType);
+        ResponseEntity<WordType> re = adminWordTypeController.updateWordType(updatedType);
 
         assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
         assertEquals(null, re.getBody());
@@ -130,9 +130,9 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testDeleteTypeOK() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(wordType);
+        when(adminWordTypeRepository.exists(wordType.getId())).thenReturn(true);
 
-        ResponseEntity<WordType> re = adminWordTypeController.deleteWordType(type);
+        ResponseEntity<String> re = adminWordTypeController.deleteWordType(wordType.getId());
 
         assertEquals(HttpStatus.OK, re.getStatusCode());
         assertEquals(null, re.getBody());
@@ -141,9 +141,9 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testDeleteTypeNotFound() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(null);
+        when(adminWordTypeRepository.exists(wordType.getId())).thenReturn(false);
 
-        ResponseEntity<WordType> re = adminWordTypeController.deleteWordType(type);
+        ResponseEntity<String> re = adminWordTypeController.deleteWordType(wordType.getId());
 
         assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
         assertEquals(null, re.getBody());
