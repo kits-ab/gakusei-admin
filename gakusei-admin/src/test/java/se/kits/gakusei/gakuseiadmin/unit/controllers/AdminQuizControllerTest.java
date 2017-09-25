@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
-import se.kits.gakusei.gakuseiadmin.controllers.AdminQuizController;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
 
 import java.io.File;
@@ -42,16 +40,11 @@ public class AdminQuizControllerTest {
 
     private MockMvc mockMvc;
 
-    @InjectMocks
-    private AdminQuizController adminQuizController;
-
     private Quiz testQuiz;
 
     @Before
     public void setUp() throws Exception {
-        adminQuizController = new AdminQuizController();
-        MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
         testQuiz = new Quiz();
         testQuiz.setName("Test quiz");
@@ -111,13 +104,13 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        List<Quiz> quizLs = this.adminQuizRepository.findByName(this.testQuiz.getName());
+        List<Quiz> quizLs = adminQuizRepository.findByName(testQuiz.getName());
         Assert.assertTrue(quizLs.size()>0);
     }
 
     @Test
     public void testUpdateQuiz() {
-        Quiz quiz = this.adminQuizRepository.save(this.testQuiz);
+        Quiz quiz = adminQuizRepository.save(testQuiz);
         String quizString = String.format("{ \"id\": \"%d\", \"name\": \"Test quiz\", \"description\": \"Test description NEW\"}",
                 quiz.getId());
 
@@ -128,20 +121,20 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Quiz quiz1 = this.adminQuizRepository.findOne(quiz.getId());
+        Quiz quiz1 = adminQuizRepository.findOne(quiz.getId());
         Assert.assertEquals(quiz.getId(), quiz1.getId());
         Assert.assertEquals(quiz.getDescription()+" NEW", quiz1.getDescription());
     }
 
     @Test
     public void testDeleteQuiz() {
-        Quiz quiz = this.adminQuizRepository.save(this.testQuiz);
+        Quiz quiz = adminQuizRepository.save(testQuiz);
 
         try {
             mockMvc.perform(delete(String.format("/api/quiz/%d/delete", quiz.getId())))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Assert.assertEquals(false, this.adminQuizRepository.exists(this.testQuiz.getId()));
+        Assert.assertEquals(false, adminQuizRepository.exists(testQuiz.getId()));
     }
 }
