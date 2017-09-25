@@ -59,7 +59,7 @@ public class AdminQuizController {
             return new ResponseEntity<String>("Could not save to DB", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<String>("File successfully uploaded", HttpStatus.OK);
+        return new ResponseEntity<String>("File successfully uploaded", HttpStatus.CREATED);
 
     }
 
