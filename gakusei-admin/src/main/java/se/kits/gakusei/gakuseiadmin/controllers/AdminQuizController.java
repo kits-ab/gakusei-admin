@@ -13,8 +13,6 @@ import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +31,7 @@ public class AdminQuizController {
     QuizNuggetRepository quizNuggetRepository;
 
     @RequestMapping(
-            value = "/api/quiz/import/csv",
+            value = "/api/quizes/csv",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
@@ -66,85 +64,79 @@ public class AdminQuizController {
     }
 
     @RequestMapping(
-            value = "/api/quiz/create",
+            value = "/api/quizes",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Quiz> createQuiz(HttpServletRequest request, @RequestBody Quiz quiz) {
-        return ResponseEntity.ok(quizRepository.save(quiz));
+    public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
+        return new ResponseEntity<>(quizRepository.save(quiz), HttpStatus.CREATED);
     }
 
     @RequestMapping(
-            value = "/api/quiz/{quizId}/delete",
+            value = "/api/quizes/{quizId}",
             method = RequestMethod.DELETE
     )
-    public ResponseEntity deleteQuiz(HttpServletRequest request, @PathVariable(value="quizId") Long quizId) {
+    public ResponseEntity<String> deleteQuiz(@PathVariable(value="quizId") Long quizId) {
         if (!this.quizRepository.exists(quizId))
-            return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         quizRepository.delete(quizId);
-        return new ResponseEntity(null, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(
-            value = "/api/quiz/update",
-            method = RequestMethod.PUT
+            value = "/api/quizes",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     @ResponseStatus( value = HttpStatus.OK )
-    public ResponseEntity<HashMap<String, Object>> updateQuiz(HttpServletRequest request, @RequestBody Quiz quiz) {
-        if (quizRepository.exists(quiz.getId())) {
-            quizRepository.save(quiz);
-            return new ResponseEntity(null, HttpStatus.OK);
+    public ResponseEntity<Quiz> updateQuiz(@RequestBody Quiz quiz) {
+        if (!quizRepository.exists(quiz.getId())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("error", "Quiz does not exist");
-        return new ResponseEntity(hashMap, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(quizRepository.save(quiz), HttpStatus.OK);
     }
 
     @RequestMapping(
-            value = "/api/quiz/nugget/create",
+            value = "/api/quizes/nuggets",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<HashMap<String, Object>> createQuizNugget(HttpServletRequest request,
-                                                                    @RequestBody HashMap<String, Object> myQuizNugget) {
+    public ResponseEntity<HashMap<String, Object>> createQuizNugget(@RequestBody HashMap<String, Object> myQuizNugget) {
         HashMap<String, Object> newMyQuizNugget = null;
         try {
             newMyQuizNugget = adminQuizHandler.createAndValidateQuizNugget(myQuizNugget);
         } catch (FormValidator.FormException exc) {
-            return new ResponseEntity(exc.getErrMap(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(exc.getErrMap(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(newMyQuizNugget, HttpStatus.CREATED);
+        return new ResponseEntity<>(newMyQuizNugget, HttpStatus.CREATED);
     }
 
     @RequestMapping(
-            value = "/api/quiz/nugget/update",
+            value = "/api/quizes/nuggets",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<HashMap<String, Object>> updateQuizNugget(HttpServletRequest request,
-                                                                    @RequestBody HashMap<String, Object> myQuizNugget) {
-        HashMap<String, Object> newMyQuizNugget = null;
+    public ResponseEntity<HashMap<String, Object>> updateQuizNugget(@RequestBody HashMap<String, Object> myQuizNugget) {
         try {
             adminQuizHandler.updateAndValidateQuizNugget(myQuizNugget);
         } catch (FormValidator.FormException exc) {
             return new ResponseEntity(exc.getErrMap(), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(newMyQuizNugget, HttpStatus.OK);
+        return new ResponseEntity(myQuizNugget, HttpStatus.OK);
     }
 
     @RequestMapping(
-            value = "/api/quiz/nugget/{quizNuggetId}/delete",
-            method = RequestMethod.DELETE,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+            value = "/api/quizes/nuggets/{quizNuggetId}",
+            method = RequestMethod.DELETE
     )
-    public ResponseEntity<HashMap<String, Object>> deleteQuizNugget(HttpServletRequest request,
-                                                                    @PathVariable(value="quizNuggetId") Long quizNuggetId) {
-        if (!this.quizNuggetRepository.exists(quizNuggetId))
-            return new ResponseEntity(null, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> deleteQuizNugget(@PathVariable(value="quizNuggetId") Long quizNuggetId) {
+        if (!this.quizNuggetRepository.exists(quizNuggetId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        HashMap<String, Object> newMyQuizNugget = null;
-        this.quizNuggetRepository.delete(quizNuggetId);
-        return new ResponseEntity(null, HttpStatus.OK);
+        quizNuggetRepository.delete(quizNuggetId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
