@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.util;
+package se.kits.gakusei.gakuseiadmin.util.csv;
 
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.Lesson;
@@ -7,6 +7,7 @@ import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.util.ParserFailureException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

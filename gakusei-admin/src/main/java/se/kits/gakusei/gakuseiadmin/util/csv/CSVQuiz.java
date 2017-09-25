@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.util;
+package se.kits.gakusei.gakuseiadmin.util.csv;
 
 import org.springframework.web.multipart.MultipartFile;
 

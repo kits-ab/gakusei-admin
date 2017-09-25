@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.util;
+package se.kits.gakusei.gakuseiadmin.util.csv;
 
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
@@ -8,6 +8,7 @@ import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.util.ParserFailureException;
 
 import java.io.IOException;
 import java.util.ArrayList;
