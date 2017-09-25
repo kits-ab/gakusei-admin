@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.gakuseiadmin.controllers.AdminBookController;
+import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
 import static org.junit.Assert.*;
 
@@ -40,8 +41,9 @@ public class AdminBookControllerTest {
         newTitle = "New title";
         invalidTitle = "Invalid title";
 
-        testBook = new Book();
-        testBook.setTitle(title);
+        testBook = AdminTestTools.generateTestBook(title);
+        updatedBook = AdminTestTools.updateTestBook(testBook, newTitle);
+
     }
 
     @Test

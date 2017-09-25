@@ -43,8 +43,8 @@ public class AdminWordTypeControllerTest {
         type = "noun";
         newType = "verb";
 
-        wordType = new WordType();
-        wordType.setType(type);
+        wordType = AdminTestTools.generateTestWordType(type);
+        updatedType = AdminTestTools.updateTestWordType(wordType, newType);
 
         wordTypes = AdminTestTools.generateWordTypes();
 
