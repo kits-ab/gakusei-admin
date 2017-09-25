@@ -15,7 +15,7 @@ public class AdminCourseController {
     CourseRepository courseRepository;
 
     @RequestMapping(
-            value = "api/courses/create",
+            value = "api/courses",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
@@ -28,7 +28,7 @@ public class AdminCourseController {
     }
 
     @RequestMapping(
-            value = "api/courses/update",
+            value = "api/courses",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
@@ -41,7 +41,7 @@ public class AdminCourseController {
     }
 
     @RequestMapping(
-            value = "api/courses/{courseID}/delete",
+            value = "api/courses/{courseID}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
