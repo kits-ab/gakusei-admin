@@ -15,7 +15,7 @@ public class AdminWordTypeController {
     private AdminWordTypeRepository adminWordTypeRepository;
 
     @RequestMapping(
-            value="api/wordtype/create",
+            value="api/wordtypes",
             method= RequestMethod.POST,
             produces= MediaType.APPLICATION_JSON_UTF8_VALUE
     )
@@ -23,16 +23,16 @@ public class AdminWordTypeController {
         WordType wordType = new WordType();
         wordType.setType(type);
 
-        if (adminWordTypeRepository.findByType(type) == null) {
-            return new ResponseEntity<WordType>(adminWordTypeRepository.save(wordType), HttpStatus.CREATED);
+        if (adminWordTypeRepository.findByType(type) != null) {
+            String errorMessage = "Word type " + type + " already exists";
+            return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
         }
 
-        String errorMessage = "Word type " + type + " already exists";
-        return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<WordType>(adminWordTypeRepository.save(wordType), HttpStatus.CREATED);
     }
 
     @RequestMapping(
-            value="api/wordtype",
+            value="api/wordtypes",
             method=RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
@@ -42,44 +42,43 @@ public class AdminWordTypeController {
     }
 
     @RequestMapping(
-            value="api/wordtype/{type}",
+            value="api/wordtypes/{id}",
             method=RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<WordType> getWordType(@PathVariable(value="type") String type) {
-        WordType wordType = adminWordTypeRepository.findByType(type);
-        if (wordType != null) {
-            return new ResponseEntity<>(wordType, HttpStatus.OK);
+    public ResponseEntity<WordType> getWordType(@PathVariable(value="id") Long id) {
+        WordType wordType = adminWordTypeRepository.findOne(id);
+        if (wordType == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(wordType, HttpStatus.OK);
     }
 
     @RequestMapping(
-            value="api/wordtype/{oldType}/update/{newType}",
-            method= RequestMethod.PUT
+            value="api/wordtypes",
+            method= RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<WordType> updateWordType(@PathVariable(value="oldType") String oldType, @PathVariable(value="newType") String newType) {
-        WordType wordType = adminWordTypeRepository.findByType(oldType);
-        if (wordType != null) {
-            wordType.setType(newType);
-            return new ResponseEntity<>(adminWordTypeRepository.save(wordType), HttpStatus.OK);
+    public ResponseEntity<WordType> updateWordType(@RequestBody WordType updatedType) {
+        if (!adminWordTypeRepository.exists(updatedType.getId())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(adminWordTypeRepository.save(updatedType), HttpStatus.OK);
     }
 
     @RequestMapping(
-            value="api/wordtype/{type}/delete",
+            value="api/wordtypes/{id}",
             method= RequestMethod.DELETE
     )
-    public ResponseEntity<WordType> deleteWordType(@PathVariable(value="type") String type) {
-        WordType wordType = adminWordTypeRepository.findByType(type);
-        if (wordType != null) {
-            adminWordTypeRepository.delete(wordType);
-            return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<String> deleteWordType(@PathVariable(value="id") Long id) {
+        if (!adminWordTypeRepository.exists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        adminWordTypeRepository.delete(id);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
