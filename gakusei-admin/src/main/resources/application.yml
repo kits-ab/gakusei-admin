@@ -9,6 +9,8 @@ gakusei:
   event-logging: true
   questions-quantity: 20
 
+server:
+  port: 8090
 ---
 
 spring:
@@ -47,6 +49,3 @@ spring:
   profiles: enable-resource-caching
   caching: true
 
-
-server:
-  port: 8090
