@@ -32,7 +32,7 @@ public class FileUploadController {
     @Autowired
     private AdminWordTypeRepository adminWordTypeRepository;
 
-    @PostMapping("/api/nugget/import/csv")
+    @PostMapping("/api/nuggets/csv")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file){
 
         CSVToDatabase parser = new CSVToDatabase(file, lessonRepository, adminWordTypeRepository, bookRepository);
