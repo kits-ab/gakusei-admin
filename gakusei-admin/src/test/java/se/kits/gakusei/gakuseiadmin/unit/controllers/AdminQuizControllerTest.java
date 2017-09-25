@@ -70,7 +70,7 @@ public class AdminQuizControllerTest {
                 e.printStackTrace();
             }
 
-            List<Quiz> testQuiz = adminQuizRepository.findAll();
+            Iterable<Quiz> testQuiz = adminQuizRepository.findAll();
 
             for (int counter=1; counter<4; counter++) {
                 boolean exists = false;
