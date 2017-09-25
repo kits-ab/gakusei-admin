@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
-import se.kits.gakusei.gakuseiadmin.Controllers.WordTypeController;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
 import static org.junit.Assert.assertEquals;

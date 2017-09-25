@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.Controllers;
+package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +11,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.Lesson;
 import se.kits.gakusei.content.model.WordType;
@@ -22,7 +21,6 @@ import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.Assert.*;

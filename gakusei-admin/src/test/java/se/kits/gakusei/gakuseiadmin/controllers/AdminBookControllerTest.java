@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.repository.BookRepository;
-import se.kits.gakusei.gakuseiadmin.Controllers.AdminBookController;
 
 import static org.junit.Assert.*;
 

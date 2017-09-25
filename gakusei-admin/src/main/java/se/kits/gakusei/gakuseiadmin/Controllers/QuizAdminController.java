@@ -1,8 +1,5 @@
-package se.kits.gakusei.gakuseiadmin.Controllers;
+package se.kits.gakusei.gakuseiadmin.controllers;
 
-import com.univocity.parsers.common.processor.RowListProcessor;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,18 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
-import se.kits.gakusei.gakuseiadmin.Util.Csv;
-import se.kits.gakusei.gakuseiadmin.Util.FormValidator;
-import se.kits.gakusei.gakuseiadmin.Util.QuizAdminHandler;
-import se.kits.gakusei.gakuseiadmin.Util.QuizCsv;
+import se.kits.gakusei.gakuseiadmin.util.FormValidator;
+import se.kits.gakusei.gakuseiadmin.util.QuizAdminHandler;
+import se.kits.gakusei.gakuseiadmin.util.QuizCsv;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
-import se.kits.gakusei.util.QuestionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.StringReader;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

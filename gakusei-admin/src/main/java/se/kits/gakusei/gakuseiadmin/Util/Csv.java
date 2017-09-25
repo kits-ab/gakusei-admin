@@ -1,26 +1,16 @@
-package se.kits.gakusei.gakuseiadmin.Util;
+package se.kits.gakusei.gakuseiadmin.util;
 
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import se.kits.gakusei.content.model.Quiz;
-import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
 
 import java.io.IOException;
-import java.io.StringReader;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class Csv {

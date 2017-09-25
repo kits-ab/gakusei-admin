@@ -1,11 +1,9 @@
-package se.kits.gakusei.gakuseiadmin.Util;
+package se.kits.gakusei.gakuseiadmin.util;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.kits.gakusei.content.model.IncorrectAnswers;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
-import se.kits.gakusei.content.repository.QuizRepository;
 import se.kits.gakusei.util.QuizHandler;
 
 import java.util.ArrayList;
