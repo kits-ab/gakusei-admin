@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin;
+package se.kits.gakusei.gakuseiadmin.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

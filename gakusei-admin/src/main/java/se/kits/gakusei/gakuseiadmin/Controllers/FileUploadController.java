@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.Controllers;
+package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,9 +11,9 @@ import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
-import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
-import se.kits.gakusei.gakuseiadmin.utility.CSVToDatabase;
-import se.kits.gakusei.gakuseiadmin.utility.ParserFailureException;
+import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.util.CSVToDatabase;
+import se.kits.gakusei.gakuseiadmin.util.ParserFailureException;
 
 import java.util.List;
 
@@ -30,12 +30,12 @@ public class FileUploadController {
     private BookRepository bookRepository;
 
     @Autowired
-    private WordTypeRepository wordTypeRepository;
+    private AdminWordTypeRepository adminWordTypeRepository;
 
     @PostMapping("/api/nugget/import/csv")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file){
 
-        CSVToDatabase parser = new CSVToDatabase(file, lessonRepository, wordTypeRepository, bookRepository);
+        CSVToDatabase parser = new CSVToDatabase(file, lessonRepository, adminWordTypeRepository, bookRepository);
 
         try {
             List<Nugget> nuggets = parser.parse();

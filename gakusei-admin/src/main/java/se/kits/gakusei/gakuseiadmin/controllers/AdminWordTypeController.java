@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.Controllers;
+package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -6,13 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.content.model.WordType;
-import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
 
 @RestController
-public class WordTypeController {
+public class AdminWordTypeController {
 
     @Autowired
-    private WordTypeRepository wordTypeRepository;
+    private AdminWordTypeRepository adminWordTypeRepository;
 
     @RequestMapping(
             value="api/wordtype/create",
@@ -23,8 +23,8 @@ public class WordTypeController {
         WordType wordType = new WordType();
         wordType.setType(type);
 
-        if (wordTypeRepository.findByType(type) == null) {
-            return new ResponseEntity<WordType>(wordTypeRepository.save(wordType), HttpStatus.CREATED);
+        if (adminWordTypeRepository.findByType(type) == null) {
+            return new ResponseEntity<WordType>(adminWordTypeRepository.save(wordType), HttpStatus.CREATED);
         }
 
         String errorMessage = "Word type " + type + " already exists";
@@ -37,7 +37,7 @@ public class WordTypeController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Iterable<WordType>> getWordTypes() {
-        Iterable<WordType> types = wordTypeRepository.findAll();
+        Iterable<WordType> types = adminWordTypeRepository.findAll();
         return new ResponseEntity<>(types, HttpStatus.OK);
     }
 
@@ -47,7 +47,7 @@ public class WordTypeController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<WordType> getWordType(@PathVariable(value="type") String type) {
-        WordType wordType = wordTypeRepository.findByType(type);
+        WordType wordType = adminWordTypeRepository.findByType(type);
         if (wordType != null) {
             return new ResponseEntity<>(wordType, HttpStatus.OK);
         }
@@ -60,10 +60,10 @@ public class WordTypeController {
             method= RequestMethod.PUT
     )
     public ResponseEntity<WordType> updateWordType(@PathVariable(value="oldType") String oldType, @PathVariable(value="newType") String newType) {
-        WordType wordType = wordTypeRepository.findByType(oldType);
+        WordType wordType = adminWordTypeRepository.findByType(oldType);
         if (wordType != null) {
             wordType.setType(newType);
-            return new ResponseEntity<>(wordTypeRepository.save(wordType), HttpStatus.OK);
+            return new ResponseEntity<>(adminWordTypeRepository.save(wordType), HttpStatus.OK);
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -74,9 +74,9 @@ public class WordTypeController {
             method= RequestMethod.DELETE
     )
     public ResponseEntity<WordType> deleteWordType(@PathVariable(value="type") String type) {
-        WordType wordType = wordTypeRepository.findByType(type);
+        WordType wordType = adminWordTypeRepository.findByType(type);
         if (wordType != null) {
-            wordTypeRepository.delete(wordType);
+            adminWordTypeRepository.delete(wordType);
             return new ResponseEntity<>(HttpStatus.OK);
         }
 

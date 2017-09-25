@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.utility;
+package se.kits.gakusei.gakuseiadmin.util;
 
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
-import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,15 +19,15 @@ public class CSVToDatabase {
 
     private BookRepository bookRepository;
 
-    private WordTypeRepository wordTypeRepository;
+    private AdminWordTypeRepository adminWordTypeRepository;
 
     private MultipartFile file;
 
-    public CSVToDatabase(MultipartFile f, LessonRepository lr, WordTypeRepository wr, BookRepository br){
+    public CSVToDatabase(MultipartFile f, LessonRepository lr, AdminWordTypeRepository wr, BookRepository br){
         file = f;
         lessonRepository = lr;
         bookRepository = br;
-        wordTypeRepository = wr;
+        adminWordTypeRepository = wr;
     }
 
     public List<Nugget> parse(){
@@ -53,7 +53,7 @@ public class CSVToDatabase {
         List<Nugget> nuggets = new ArrayList<>();
 
         for(String[] stringList : rows){
-            CSVNugget csvNugget = new CSVNugget(stringList, lessonRepository, bookRepository, wordTypeRepository);
+            CSVNugget csvNugget = new CSVNugget(stringList, lessonRepository, bookRepository, adminWordTypeRepository);
             nuggets.add(csvNugget.getNugget());
         }
 

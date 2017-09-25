@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.utility;
+package se.kits.gakusei.gakuseiadmin.util;
 
 public class ParserFailureException extends RuntimeException {
 

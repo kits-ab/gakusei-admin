@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.Controllers;
+package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

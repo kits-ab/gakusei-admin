@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin;
+package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,15 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
-import se.kits.gakusei.gakuseiadmin.Controllers.QuizAdminController;
+import se.kits.gakusei.gakuseiadmin.controllers.AdminQuizController;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
 
 import java.io.File;
@@ -34,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class QuizAdminControllerTest {
+public class AdminQuizControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
@@ -45,13 +43,13 @@ public class QuizAdminControllerTest {
     private MockMvc mockMvc;
 
     @InjectMocks
-    private QuizAdminController adminQuizController;
+    private AdminQuizController adminQuizController;
 
     private Quiz testQuiz;
 
     @Before
     public void setUp() throws Exception {
-        adminQuizController = new QuizAdminController();
+        adminQuizController = new AdminQuizController();
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 

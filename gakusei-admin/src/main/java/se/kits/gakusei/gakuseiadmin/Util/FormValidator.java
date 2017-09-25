@@ -1,7 +1,6 @@
-package se.kits.gakusei.gakuseiadmin.Util;
+package se.kits.gakusei.gakuseiadmin.util;
 
 import org.springframework.data.repository.CrudRepository;
-import se.kits.gakusei.content.repository.QuizRepository;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,8 +1,5 @@
-package se.kits.gakusei.gakuseiadmin.Controllers;
+package se.kits.gakusei.gakuseiadmin.controllers;
 
-import com.univocity.parsers.common.processor.RowListProcessor;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,31 +8,26 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
-import se.kits.gakusei.gakuseiadmin.Util.Csv;
-import se.kits.gakusei.gakuseiadmin.Util.FormValidator;
-import se.kits.gakusei.gakuseiadmin.Util.QuizAdminHandler;
-import se.kits.gakusei.gakuseiadmin.Util.QuizCsv;
+import se.kits.gakusei.gakuseiadmin.util.CSVQuiz;
+import se.kits.gakusei.gakuseiadmin.util.FormValidator;
+import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
-import se.kits.gakusei.util.QuestionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.StringReader;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-public class QuizAdminController {
+public class AdminQuizController {
 
     @Autowired
     AdminQuizRepository quizRepository;
 
     @Autowired
-    QuizAdminHandler quizAdminHandler;
+    AdminQuizHandler adminQuizHandler;
 
     @Autowired
     QuizNuggetRepository quizNuggetRepository;
@@ -50,7 +42,7 @@ public class QuizAdminController {
         List<Quiz> quizList = new ArrayList<Quiz>();
         Map<String, List<String[]>> result;
         try{
-            result = QuizCsv.parse(file);
+            result = CSVQuiz.parse(file);
         } catch (Exception e){
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -118,7 +110,7 @@ public class QuizAdminController {
                                                                     @RequestBody HashMap<String, Object> myQuizNugget) {
         HashMap<String, Object> newMyQuizNugget = null;
         try {
-            newMyQuizNugget = quizAdminHandler.createAndValidateQuizNugget(myQuizNugget);
+            newMyQuizNugget = adminQuizHandler.createAndValidateQuizNugget(myQuizNugget);
         } catch (FormValidator.FormException exc) {
             return new ResponseEntity(exc.getErrMap(), HttpStatus.BAD_REQUEST);
         }
@@ -134,7 +126,7 @@ public class QuizAdminController {
                                                                     @RequestBody HashMap<String, Object> myQuizNugget) {
         HashMap<String, Object> newMyQuizNugget = null;
         try {
-            quizAdminHandler.updateAndValidateQuizNugget(myQuizNugget);
+            adminQuizHandler.updateAndValidateQuizNugget(myQuizNugget);
         } catch (FormValidator.FormException exc) {
             return new ResponseEntity(exc.getErrMap(), HttpStatus.BAD_REQUEST);
         }

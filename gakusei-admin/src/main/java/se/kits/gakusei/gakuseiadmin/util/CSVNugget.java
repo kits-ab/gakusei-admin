@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.utility;
+package se.kits.gakusei.gakuseiadmin.util;
 
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.Lesson;
@@ -6,7 +6,7 @@ import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
-import se.kits.gakusei.gakuseiadmin.content.WordTypeRepository;
+import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class CSVNugget {
 
     private LessonRepository lessonRepository;
     private BookRepository bookRepository;
-    private WordTypeRepository wordTypeRepository;
+    private AdminWordTypeRepository adminWordTypeRepository;
 
     private String[] values;
 
@@ -33,11 +33,11 @@ public class CSVNugget {
 
     private final int EXPECTED_NUMBER_OF_VALUES = 10;
 
-    public CSVNugget(String[] values, LessonRepository lr, BookRepository br, WordTypeRepository wtr){
+    public CSVNugget(String[] values, LessonRepository lr, BookRepository br, AdminWordTypeRepository wtr){
         this.values = values;
         lessonRepository = lr;
         bookRepository = br;
-        wordTypeRepository = wtr;
+        adminWordTypeRepository = wtr;
         initialCheck();
     }
 
@@ -67,7 +67,7 @@ public class CSVNugget {
     }
 
     private WordType createWordType(String s){
-        WordType wt = wordTypeRepository.findByType(s);
+        WordType wt = adminWordTypeRepository.findByType(s);
 
         if(wt != null) {
             return wt;

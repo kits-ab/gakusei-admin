@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin;
+package se.kits.gakusei.gakuseiadmin.unit.util;
 
 
 import org.junit.Assert;
@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
-import se.kits.gakusei.gakuseiadmin.Util.Csv;
-import se.kits.gakusei.gakuseiadmin.Util.QuizCsv;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +17,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class csvUtilTest {
+public class CSVTest {
 
 
     @Test
@@ -32,7 +30,7 @@ public class csvUtilTest {
             fip = new FileInputStream(new File("src/test/resources/csv/QuizCsvShouldPass.csv"));
             MultipartFile mpf = new MockMultipartFile("file", fip);
 
-            Map<String, List<String[]>> result = Csv.parse(mpf);
+            Map<String, List<String[]>> result = se.kits.gakusei.gakuseiadmin.util.CSV.parse(mpf);
 
             for (String[] value: result.get("HEADERS")) {
                 Assert.assertEquals("name", value[0]);

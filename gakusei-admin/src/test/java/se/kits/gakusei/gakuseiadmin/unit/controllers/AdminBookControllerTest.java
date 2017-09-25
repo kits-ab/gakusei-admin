@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.controllers;
+package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.repository.BookRepository;
-import se.kits.gakusei.gakuseiadmin.Controllers.AdminBookController;
+import se.kits.gakusei.gakuseiadmin.controllers.AdminBookController;
 
 import static org.junit.Assert.*;
 
