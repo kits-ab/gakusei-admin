@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.controllers;
+package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.repository.BookRepository;
+
+import se.kits.gakusei.gakuseiadmin.controllers.AdminBookController;
+import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
 import static org.junit.Assert.*;
 
@@ -29,6 +32,7 @@ public class AdminBookControllerTest {
     private String invalidTitle;
 
     private Book testBook;
+    private Book updatedBook;
 
     @Before
     public void setUp(){
@@ -38,27 +42,27 @@ public class AdminBookControllerTest {
         newTitle = "New title";
         invalidTitle = "Invalid title";
 
-        testBook = new Book();
-        testBook.setTitle(title);
+        testBook = AdminTestTools.generateTestBook(title);
+        updatedBook = AdminTestTools.updateTestBook(testBook, newTitle);
+
     }
 
     @Test
     public void testBasicPUT(){
-        Mockito.when(bookRepository.findByTitle(title)).thenReturn(testBook);
-        testBook.setTitle(newTitle);
-        Mockito.when(bookRepository.save(testBook)).thenReturn(testBook);
+        Mockito.when(bookRepository.exists(updatedBook.getId())).thenReturn(true);
+        Mockito.when(bookRepository.save(updatedBook)).thenReturn(updatedBook);
 
-        ResponseEntity<Book> re = adminBookController.updateBookTitle(title, newTitle);
+        ResponseEntity<Book> re = adminBookController.updateBookTitle(updatedBook);
 
         assertEquals(HttpStatus.OK, re.getStatusCode());
-        assertEquals(testBook, re.getBody());
+        assertEquals(updatedBook, re.getBody());
     }
 
     @Test
     public void testFailingPUT(){
-        Mockito.when(bookRepository.findByTitle(invalidTitle)).thenReturn(null);
+        Mockito.when(bookRepository.exists(updatedBook.getId())).thenReturn(false);
 
-        ResponseEntity<Book> re = adminBookController.updateBookTitle(invalidTitle, newTitle);
+        ResponseEntity<Book> re = adminBookController.updateBookTitle(updatedBook);
 
         assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
     }
@@ -85,18 +89,18 @@ public class AdminBookControllerTest {
 
     @Test
     public void testBasicDELETE(){
-        Mockito.when(bookRepository.findByTitle(title)).thenReturn(testBook);
+        Mockito.when(bookRepository.exists(testBook.getId())).thenReturn(true);
 
-        ResponseEntity<Book> re = adminBookController.deleteBook(title);
+        ResponseEntity<Book> re = adminBookController.deleteBook(testBook.getId());
 
         assertEquals(HttpStatus.OK, re.getStatusCode());
     }
 
     @Test
     public void testFailingDELETE(){
-        Mockito.when(bookRepository.findByTitle(invalidTitle)).thenReturn(null);
+        Mockito.when(bookRepository.exists(testBook.getId())).thenReturn(false);
 
-        ResponseEntity<Book> re = adminBookController.deleteBook(invalidTitle);
+        ResponseEntity<Book> re = adminBookController.deleteBook(testBook.getId());
 
         assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
     }

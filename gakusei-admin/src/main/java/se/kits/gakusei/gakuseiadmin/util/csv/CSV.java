@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin.util;
+package se.kits.gakusei.gakuseiadmin.util.csv;
 
 import com.univocity.parsers.common.processor.RowListProcessor;
 import com.univocity.parsers.csv.CsvParser;
@@ -13,7 +13,7 @@ import java.util.List;
 
 import java.util.Map;
 
-public class Csv {
+public class CSV {
 
     /**
      * From a Mutlipart file upload, parse the CSV and return a map with its headers and rows.

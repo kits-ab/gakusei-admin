@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin;
+package se.kits.gakusei.gakuseiadmin.unit.util;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Component
-public class QuizAdminHandler extends QuizHandler {
+public class AdminQuizHandler extends QuizHandler {
 
     public HashMap<String, Object> createAndValidateQuizNugget(HashMap<String, Object> myQuizNugget) throws FormValidator.FormException {
         FormValidator quizValidator = new FormValidator(this.prepareQuizValidation(false));

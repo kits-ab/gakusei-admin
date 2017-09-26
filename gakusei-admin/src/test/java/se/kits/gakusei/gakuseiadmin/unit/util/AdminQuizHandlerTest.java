@@ -1,4 +1,4 @@
-package se.kits.gakusei.gakuseiadmin;
+package se.kits.gakusei.gakuseiadmin.unit.util;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +12,7 @@ import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
-import se.kits.gakusei.gakuseiadmin.util.QuizAdminHandler;
+import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +22,10 @@ import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class QuizAdminHandlerTest {
+public class AdminQuizHandlerTest {
 
     @Autowired
-    private QuizAdminHandler quizAdminHandler;
+    private AdminQuizHandler adminQuizHandler;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -64,9 +64,9 @@ public class QuizAdminHandlerTest {
     }
 
     private HashMap<String, Object> constructQuizNugget() {
-        HashMap<String, Object> quizNugget = this.quizAdminHandler.convertQuizNugget(this.generateQuizNugget(false));
+        HashMap<String, Object> quizNugget = this.adminQuizHandler.convertQuizNugget(this.generateQuizNugget(false));
         // NEEDS TO BE AN INT
-        quizNugget.put(this.quizAdminHandler.QN_QUIZ_REF, ((Long) quizNugget.get(this.quizAdminHandler.QN_QUIZ_REF)).intValue());
+        quizNugget.put(this.adminQuizHandler.QN_QUIZ_REF, ((Long) quizNugget.get(this.adminQuizHandler.QN_QUIZ_REF)).intValue());
 
         List<HashMap<String, Object>> incorrectAnswers = new ArrayList<>();
         for (int i=0; i<3; i++) {
@@ -84,7 +84,7 @@ public class QuizAdminHandlerTest {
         HashMap<String, Object> quizNugget = null;
 
         try {
-            quizNugget = quizAdminHandler.createAndValidateQuizNugget(this.constructQuizNugget());
+            quizNugget = adminQuizHandler.createAndValidateQuizNugget(this.constructQuizNugget());
         } catch (Exception exc) {
             assert false;
         }
@@ -99,17 +99,17 @@ public class QuizAdminHandlerTest {
         for (int i=0; i<3; i++)
             this.generateIncorrectAnswer(quizNugget);
 
-        HashMap<String, Object> myQuizNugget = quizAdminHandler.convertQuizNugget(quizNugget);
-        myQuizNugget.put(quizAdminHandler.QN_CORRECT_ANSWER, "Gakusei");
+        HashMap<String, Object> myQuizNugget = adminQuizHandler.convertQuizNugget(quizNugget);
+        myQuizNugget.put(adminQuizHandler.QN_CORRECT_ANSWER, "Gakusei");
 
         // CONVERT LONG TO INT
-        myQuizNugget.put(quizAdminHandler.QN_ID,((Long) myQuizNugget.get(quizAdminHandler.QN_ID)).intValue());
-        myQuizNugget.put(quizAdminHandler.QN_QUIZ_REF,((Long) myQuizNugget.get(quizAdminHandler.QN_QUIZ_REF)).intValue());
-        for (HashMap<String, Object> myIncorrectAnswer : (List<HashMap>) myQuizNugget.get(quizAdminHandler.QN_INCORRECT_ANSWERS))
-            myIncorrectAnswer.put(quizAdminHandler.IA_ID,((Long) myIncorrectAnswer.get(quizAdminHandler.IA_ID)).intValue());
+        myQuizNugget.put(adminQuizHandler.QN_ID,((Long) myQuizNugget.get(adminQuizHandler.QN_ID)).intValue());
+        myQuizNugget.put(adminQuizHandler.QN_QUIZ_REF,((Long) myQuizNugget.get(adminQuizHandler.QN_QUIZ_REF)).intValue());
+        for (HashMap<String, Object> myIncorrectAnswer : (List<HashMap>) myQuizNugget.get(adminQuizHandler.QN_INCORRECT_ANSWERS))
+            myIncorrectAnswer.put(adminQuizHandler.IA_ID,((Long) myIncorrectAnswer.get(adminQuizHandler.IA_ID)).intValue());
 
         try {
-            quizAdminHandler.updateAndValidateQuizNugget(myQuizNugget);
+            adminQuizHandler.updateAndValidateQuizNugget(myQuizNugget);
         } catch (Exception exc) {
             assert false;
         }

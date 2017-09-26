@@ -1,10 +1,9 @@
-package se.kits.gakusei.gakuseiadmin;
+package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
-import se.kits.gakusei.gakuseiadmin.controllers.QuizAdminController;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
 
 import java.io.File;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class QuizAdminControllerTest {
+public class AdminQuizControllerTest {
 
     @Autowired
     private WebApplicationContext wac;
@@ -42,16 +40,11 @@ public class QuizAdminControllerTest {
 
     private MockMvc mockMvc;
 
-    @InjectMocks
-    private QuizAdminController adminQuizController;
-
     private Quiz testQuiz;
 
     @Before
     public void setUp() throws Exception {
-        adminQuizController = new QuizAdminController();
-        MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
         testQuiz = new Quiz();
         testQuiz.setName("Test quiz");
@@ -69,15 +62,15 @@ public class QuizAdminControllerTest {
             MockMultipartFile mpf = new MockMultipartFile("file", fip);
 
             try {
-                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/quiz/import/csv")
+                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/quizes/csv")
                         .file(mpf))
-                        .andExpect(status().is(200));
+                        .andExpect(status().isCreated());
             } catch (Exception e) {
                 System.err.println("[-] Could not mock file");
                 e.printStackTrace();
             }
 
-            List<Quiz> testQuiz = adminQuizRepository.findAll();
+            Iterable<Quiz> testQuiz = adminQuizRepository.findAll();
 
             for (int counter=1; counter<4; counter++) {
                 boolean exists = false;
@@ -105,43 +98,43 @@ public class QuizAdminControllerTest {
         String quizString = "{ \"name\": \"Test quiz\", \"description\": \"Test description\"}";
 
         try {
-            mockMvc.perform(post("/api/quiz/create")
-                    .contentType(MediaType.APPLICATION_JSON)
+            mockMvc.perform(post("/api/quizes")
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(quizString))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isCreated());
         } catch (Exception exc) { }
 
-        List<Quiz> quizLs = this.adminQuizRepository.findByName(this.testQuiz.getName());
+        List<Quiz> quizLs = adminQuizRepository.findByName(testQuiz.getName());
         Assert.assertTrue(quizLs.size()>0);
     }
 
     @Test
     public void testUpdateQuiz() {
-        Quiz quiz = this.adminQuizRepository.save(this.testQuiz);
+        Quiz quiz = adminQuizRepository.save(testQuiz);
         String quizString = String.format("{ \"id\": \"%d\", \"name\": \"Test quiz\", \"description\": \"Test description NEW\"}",
                 quiz.getId());
 
         try {
-            mockMvc.perform(put("/api/quiz/update")
-                    .contentType(MediaType.APPLICATION_JSON)
+            mockMvc.perform(put(String.format("/api/quizes"))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                     .content(quizString))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Quiz quiz1 = this.adminQuizRepository.findOne(quiz.getId());
+        Quiz quiz1 = adminQuizRepository.findOne(quiz.getId());
         Assert.assertEquals(quiz.getId(), quiz1.getId());
         Assert.assertEquals(quiz.getDescription()+" NEW", quiz1.getDescription());
     }
 
     @Test
     public void testDeleteQuiz() {
-        Quiz quiz = this.adminQuizRepository.save(this.testQuiz);
+        Quiz quiz = adminQuizRepository.save(testQuiz);
 
         try {
-            mockMvc.perform(delete(String.format("/api/quiz/%d/delete", quiz.getId())))
+            mockMvc.perform(delete(String.format("/api/quizes/%d", quiz.getId())))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Assert.assertEquals(false, this.adminQuizRepository.exists(this.testQuiz.getId()));
+        Assert.assertEquals(false, adminQuizRepository.exists(testQuiz.getId()));
     }
 }
