@@ -25,4 +25,18 @@ public class AdminUserController {
     public ResponseEntity<Iterable<User>> searchUser(@PathVariable(value = "searchString") String searchString){
         return new ResponseEntity<>(adminUserRepository.findByNameContains(searchString), HttpStatus.OK);
     }
+
+    @RequestMapping(
+            value = "api/users/{username}",
+            method = RequestMethod.DELETE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "username") String username){
+        if(adminUserRepository.exists(username)) {
+            adminUserRepository.delete(username);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
