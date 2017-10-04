@@ -32,9 +32,6 @@ public class AdminUserController {
     )
     public ResponseEntity<Iterable<User>> searchUserFilterByRole(@PathVariable(value = "searchString") String searchString,
                                                                  @PathVariable(value = "role") String role) {
-        System.out.println(searchString);
-        System.out.println(role);
-
         if(searchString.equals(NO_SEARCHSTRING_PROVIDED)){
             searchString = "";
         }
