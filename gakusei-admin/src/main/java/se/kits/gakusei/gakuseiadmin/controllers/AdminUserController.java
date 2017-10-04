@@ -22,18 +22,43 @@ public class AdminUserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    private final String NO_SEARCHSTRING_PROVIDED = "NO_SEARCHSTRING_PROVIDED";
+    private final String NO_ROLE_PROVIDED = "NO_ROLE_PROVIDED";
+
     @RequestMapping(
             value="/api/users/{searchString}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Iterable<User>> searchUser(@PathVariable(value = "searchString") String searchString){
-        return new ResponseEntity<>(adminUserRepository.findByNameContains(searchString), HttpStatus.OK);
+        return new ResponseEntity<>(adminUserRepository.findByNameContainsFilterByRole(searchString, ""), HttpStatus.OK);
     }
 
     @RequestMapping(
-            value = "api/users",
+            value = "/api/users/{searchString}/{role}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Iterable<User>> searchUserFilterByRole(@PathVariable(value = "searchString") String searchString,
+                                                                 @PathVariable(value = "role") String role) {
+        System.out.println(searchString);
+        System.out.println(role);
+
+        if(searchString.equals(NO_SEARCHSTRING_PROVIDED)){
+            searchString = "";
+        }
+
+        if(role.equals(NO_ROLE_PROVIDED)){
+            role = "";
+        }
+
+        return new ResponseEntity<>(adminUserRepository.findByNameContainsFilterByRole(searchString, role), HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "/api/users",
             method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<User> resetPassword(@RequestBody User user){
@@ -46,7 +71,7 @@ public class AdminUserController {
     }
 
     @RequestMapping(
-            value = "api/users/{username}",
+            value = "/api/users/{username}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
