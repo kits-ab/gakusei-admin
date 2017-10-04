@@ -26,15 +26,6 @@ public class AdminUserController {
     private final String NO_ROLE_PROVIDED = "NO_ROLE_PROVIDED";
 
     @RequestMapping(
-            value="/api/users/{searchString}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
-    )
-    public ResponseEntity<Iterable<User>> searchUser(@PathVariable(value = "searchString") String searchString){
-        return new ResponseEntity<>(adminUserRepository.findByNameContainsFilterByRole(searchString, ""), HttpStatus.OK);
-    }
-
-    @RequestMapping(
             value = "/api/users/{searchString}/{role}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
