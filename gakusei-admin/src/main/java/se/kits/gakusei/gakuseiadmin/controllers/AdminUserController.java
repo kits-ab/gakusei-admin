@@ -55,17 +55,18 @@ public class AdminUserController {
     }
 
     @RequestMapping(
-            value = "/api/users",
+            value = "/api/users/password",
             method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<User> resetPassword(@RequestBody User user,
                                               Principal principal){
-        if(adminUserRepository.exists(user.getUsername())) {
+        User toUpdate = adminUserRepository.findOne(user.getUsername());
+        if(toUpdate != null) {
             logEvent(adminUserRepository.findOne(principal.getName()), user.getUsername(), "PASSWORD");
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
+            toUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
+            return new ResponseEntity<>(userRepository.save(toUpdate), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
