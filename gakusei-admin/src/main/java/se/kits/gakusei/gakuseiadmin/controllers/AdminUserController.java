@@ -7,8 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.gakuseiadmin.content.AdminUserRepository;
+import se.kits.gakusei.user.model.Event;
 import se.kits.gakusei.user.model.User;
+import se.kits.gakusei.user.repository.EventRepository;
 import se.kits.gakusei.user.repository.UserRepository;
+
+import java.security.Principal;
+import java.sql.Timestamp;
 
 @RestController
 public class AdminUserController {
@@ -21,6 +26,9 @@ public class AdminUserController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    EventRepository eventRepository;
 
     private final String NO_SEARCHSTRING_PROVIDED = "NO_SEARCHSTRING_PROVIDED";
     private final String NO_ROLE_PROVIDED = "NO_ROLE_PROVIDED";
@@ -49,7 +57,8 @@ public class AdminUserController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<User> resetPassword(@RequestBody User user){
+    public ResponseEntity<User> resetPassword(@RequestBody User user,
+                                              Principal principal){
         if(adminUserRepository.exists(user.getUsername())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
@@ -63,12 +72,25 @@ public class AdminUserController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<User> deleteUser(@PathVariable(value = "username") String username){
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "username") String username,
+                                           Principal principal){
         if(adminUserRepository.exists(username)) {
             adminUserRepository.delete(username);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private void logEvent(User user, String action){
+        Event event = new Event();
+        event.setTimestamp(new Timestamp(System.currentTimeMillis()));
+        event.setGamemode("Administration");
+        event.setNuggetId(null);
+        event.setType("Administration");
+        event.setUser(user);
+        event.setData(action);
+
+        eventRepository.save(event);
     }
 }
