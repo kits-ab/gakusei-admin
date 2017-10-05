@@ -63,7 +63,7 @@ public class AdminUserController {
     public ResponseEntity<User> resetPassword(@RequestBody User user,
                                               Principal principal){
         if(adminUserRepository.exists(user.getUsername())) {
-            logEvent(adminUserRepository.findOne(principal.getName()), "Change password for user " + user.getUsername());
+            logEvent(adminUserRepository.findOne(principal.getName()), "Change password: " + user.getUsername());
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
         } else {
@@ -79,7 +79,7 @@ public class AdminUserController {
     public ResponseEntity<User> deleteUser(@PathVariable(value = "username") String username,
                                            Principal principal){
         if(adminUserRepository.exists(username)) {
-            logEvent(adminUserRepository.findOne(principal.getName()), "Delete user " + username);
+            logEvent(adminUserRepository.findOne(principal.getName()), "Delete: " + username);
             adminUserRepository.delete(username);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
