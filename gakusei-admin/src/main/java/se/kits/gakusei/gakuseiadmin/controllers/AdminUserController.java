@@ -41,7 +41,7 @@ public class AdminUserController {
     public ResponseEntity<Iterable<User>> searchUserFilterByRole(@PathVariable(value = "searchString") String searchString,
                                                                  @PathVariable(value = "role") String role,
                                                                  Principal principal) {
-        logEvent(adminUserRepository.findOne(principal.getName()), "Search: " + searchString + ", " + role);
+        logEvent(adminUserRepository.findOne(principal.getName()), searchString + " : " + role, "SEARCH");
 
         if(searchString.equals(NO_SEARCHSTRING_PROVIDED)){
             searchString = "";
@@ -63,7 +63,7 @@ public class AdminUserController {
     public ResponseEntity<User> resetPassword(@RequestBody User user,
                                               Principal principal){
         if(adminUserRepository.exists(user.getUsername())) {
-            logEvent(adminUserRepository.findOne(principal.getName()), "Change password: " + user.getUsername());
+            logEvent(adminUserRepository.findOne(principal.getName()), user.getUsername(), "PASSWORD");
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
         } else {
@@ -79,7 +79,7 @@ public class AdminUserController {
     public ResponseEntity<User> deleteUser(@PathVariable(value = "username") String username,
                                            Principal principal){
         if(adminUserRepository.exists(username)) {
-            logEvent(adminUserRepository.findOne(principal.getName()), "Delete: " + username);
+            logEvent(adminUserRepository.findOne(principal.getName()), username, "DELETE");
             adminUserRepository.delete(username);
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
@@ -87,12 +87,12 @@ public class AdminUserController {
         }
     }
 
-    private void logEvent(User user, String action){
+    private void logEvent(User user, String action, String type){
         Event event = new Event();
         event.setTimestamp(new Timestamp(System.currentTimeMillis()));
         event.setGamemode("Administration");
         event.setNuggetId(null);
-        event.setType("Administration");
+        event.setType(type);
         event.setUser(user);
         event.setData(action);
 
