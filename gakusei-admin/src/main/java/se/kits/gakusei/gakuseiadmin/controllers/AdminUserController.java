@@ -72,6 +72,24 @@ public class AdminUserController {
     }
 
     @RequestMapping(
+            value = "api/users/role",
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<User> changeRole(@RequestBody User user,
+                                           Principal principal){
+        User toUpdate = adminUserRepository.findOne(user.getUsername());
+        if(toUpdate != null) {
+            logEvent(adminUserRepository.findOne(principal.getName()), toUpdate.getRole() + " -> " + user.getRole(), "ROLE");
+            toUpdate.setRole(user.getRole());
+            return new ResponseEntity<>(adminUserRepository.save(toUpdate), HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(
             value = "/api/users/{username}",
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
