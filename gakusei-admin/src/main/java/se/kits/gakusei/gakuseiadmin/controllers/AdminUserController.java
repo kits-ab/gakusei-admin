@@ -41,6 +41,8 @@ public class AdminUserController {
     public ResponseEntity<Iterable<User>> searchUserFilterByRole(@PathVariable(value = "searchString") String searchString,
                                                                  @PathVariable(value = "role") String role,
                                                                  Principal principal) {
+        logEvent(adminUserRepository.findOne(principal.getName()), "Search: " + searchString + ", " + role);
+
         if(searchString.equals(NO_SEARCHSTRING_PROVIDED)){
             searchString = "";
         }
@@ -48,8 +50,6 @@ public class AdminUserController {
         if(role.equals(NO_ROLE_PROVIDED)){
             role = "";
         }
-
-        logEvent(adminUserRepository.findOne(principal.getName()), "Search: " + searchString + ", " + role);
 
         return new ResponseEntity<>(adminUserRepository.findByNameContainsFilterByRole(searchString, role), HttpStatus.OK);
     }
