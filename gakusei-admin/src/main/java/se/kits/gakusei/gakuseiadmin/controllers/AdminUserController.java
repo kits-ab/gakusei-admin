@@ -73,7 +73,7 @@ public class AdminUserController {
     }
 
     @RequestMapping(
-            value = "api/users/role",
+            value = "/api/users/role",
             method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
@@ -82,9 +82,9 @@ public class AdminUserController {
                                            Principal principal){
         User toUpdate = adminUserRepository.findOne(user.getUsername());
         if(toUpdate != null) {
-            logEvent(adminUserRepository.findOne(principal.getName()), toUpdate.getRole() + " -> " + user.getRole(), "ROLE");
+            logEvent(adminUserRepository.findOne(principal.getName()), toUpdate.getUsername() + " : " + toUpdate.getRole() + " -> " + user.getRole(), "ROLE");
             toUpdate.setRole(user.getRole());
-            return new ResponseEntity<>(adminUserRepository.save(toUpdate), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(adminUserRepository.save(toUpdate), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
