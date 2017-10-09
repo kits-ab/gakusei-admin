@@ -66,7 +66,7 @@ public class AdminUserController {
         if(toUpdate != null) {
             logEvent(adminUserRepository.findOne(principal.getName()), user.getUsername(), "PASSWORD");
             toUpdate.setPassword(passwordEncoder.encode(user.getPassword()));
-            return new ResponseEntity<>(userRepository.save(toUpdate), HttpStatus.OK);
+            return new ResponseEntity<>(adminUserRepository.save(toUpdate), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
