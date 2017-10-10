@@ -114,6 +114,25 @@ public class AdminQuizController {
     }
 
     @RequestMapping(
+            value = "/api/quizes/nuggets/list",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<?> createQuizNuggets(@RequestBody List<HashMap<String, Object>> myQuizNuggets) {
+        List<HashMap<String, Object>> newMyQuizNuggets = new ArrayList<>();
+        try {
+            for (HashMap<String, Object> quizNugget : myQuizNuggets) {
+                newMyQuizNuggets.
+                        add(adminQuizHandler.createAndValidateQuizNugget(quizNugget));
+            }
+        } catch (FormValidator.FormException exc) {
+            return new ResponseEntity<>(exc.getErrMap(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Iterable<HashMap<String, Object>>>(newMyQuizNuggets, HttpStatus.CREATED);
+    }
+
+
+    @RequestMapping(
             value = "/api/quizes/nuggets",
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
