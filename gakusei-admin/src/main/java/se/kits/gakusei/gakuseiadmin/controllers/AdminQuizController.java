@@ -77,9 +77,9 @@ public class AdminQuizController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity<String> deleteQuiz(@PathVariable(value="quizId") Long quizId) {
-        if (!this.quizRepository.exists(quizId))
+        if (!this.quizRepository.exists(quizId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+        }
         quizRepository.delete(quizId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
