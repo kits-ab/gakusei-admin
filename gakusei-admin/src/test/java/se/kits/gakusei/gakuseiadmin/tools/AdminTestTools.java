@@ -3,6 +3,7 @@ package se.kits.gakusei.gakuseiadmin.tools;
 import se.kits.gakusei.content.model.Course;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.WordType;
+import se.kits.gakusei.user.model.User;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,18 @@ public class AdminTestTools {
         Course course = new Course();
         course.setName("Test course");
         return course;
+    }
+
+    public static User createUser() {
+        User user = new User();
+        user.setRole("ROLE_ADMIN");
+        user.setUsername("testUser");
+        user.setPassword("password");
+        user.setEvents(null);
+        user.setProgressTrackingList(null);
+        user.setUsersLessons(null);
+
+        return user;
     }
 
     public static Book generateTestBook(String title) {
