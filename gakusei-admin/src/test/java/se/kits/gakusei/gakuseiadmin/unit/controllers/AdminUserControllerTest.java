@@ -59,7 +59,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    public void resetPassword() throws Exception {
+    public void resetPasswordOK() throws Exception {
         Mockito.when(adminUserRepository.findOne(testUser.getUsername())).thenReturn(testUser);
         testUser.setPassword("newPassword");
         Mockito.when(adminUserRepository.save(testUser)).thenReturn(testUser);
@@ -80,7 +80,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    public void changeRole() throws Exception {
+    public void changeRoleOK() throws Exception {
         Mockito.when(adminUserRepository.findOne(testUser.getUsername())).thenReturn(testUser);
         testUser.setRole("newRole");
         Mockito.when(adminUserRepository.save(testUser)).thenReturn(testUser);
@@ -101,7 +101,7 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    public void deleteUser() throws Exception {
+    public void deleteUserOK() throws Exception {
         Mockito.when(adminUserRepository.exists(testUser.getUsername())).thenReturn(true);
 
         ResponseEntity<User> re = adminUserController.deleteUser(testUser.getUsername(), principal);
