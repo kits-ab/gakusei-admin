@@ -20,6 +20,7 @@ import se.kits.gakusei.user.model.User;
 import se.kits.gakusei.user.repository.EventRepository;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -42,12 +43,14 @@ public class AdminUserControllerTest {
     private PasswordEncoder passwordEncoder;
 
     private User testUser;
+    private Iterable<User> testUsers;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        testUser = AdminTestTools.createUser();
+        testUser = AdminTestTools.createUser("TestUser", "ROLE_ADMIN");
+        testUsers = AdminTestTools.createUsers();
 
         Mockito.when(eventRepository.save(Mockito.any(Event.class))).thenReturn(null);
         Mockito.when(principal.getName()).thenReturn(testUser.getUsername());
@@ -55,7 +58,66 @@ public class AdminUserControllerTest {
     }
 
     @Test
-    public void searchUserFilterByRole() throws Exception {
+    public void searchAllOK() throws Exception {
+        String searchName = "";
+        String searchRole = "";
+        Iterable<User> expectedReturn = AdminTestTools.matchingUsernameAndRole(testUsers, searchName, searchRole);
+        Mockito.when(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchName, searchRole)).thenReturn(expectedReturn);
+
+        ResponseEntity<Iterable<User>> re = adminUserController.searchUserFilterByRole(searchName, searchRole, principal);
+
+        assertEquals(HttpStatus.OK, re.getStatusCode());
+        assertEquals(expectedReturn, re.getBody());
+    }
+
+    @Test
+    public void searchAllAdminsOK() {
+        String searchName = "";
+        String searchRole = "ROLE_ADMIN";
+        Iterable<User> expectedReturn = AdminTestTools.matchingUsernameAndRole(testUsers, searchName, searchRole);
+        Mockito.when(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchName, searchRole)).thenReturn(expectedReturn);
+
+        ResponseEntity<Iterable<User>> re = adminUserController.searchUserFilterByRole(searchName, searchRole, principal);
+
+        assertEquals(HttpStatus.OK, re.getStatusCode());
+        assertEquals(expectedReturn, re.getBody());
+    }
+
+    @Test
+    public void searchAllUsersOK() {
+        String searchName = "";
+        String searchRole = "ROLE_USER";
+        Iterable<User> expectedReturn = AdminTestTools.matchingUsernameAndRole(testUsers, searchName, searchRole);
+        Mockito.when(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchName, searchRole)).thenReturn(expectedReturn);
+
+        ResponseEntity<Iterable<User>> re = adminUserController.searchUserFilterByRole(searchName, searchRole, principal);
+
+        assertEquals(HttpStatus.OK, re.getStatusCode());
+        assertEquals(expectedReturn, re.getBody());
+    }
+
+    @Test
+    public void searchCaseInsensitiveOK() {
+        String searchNameUpper = "A";
+        String searchRole = "";
+        Iterable<User> expectedReturnUpper = AdminTestTools.matchingUsernameAndRole(testUsers, searchNameUpper, searchRole);
+        Mockito.when(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchNameUpper, searchRole)).thenReturn(expectedReturnUpper);
+
+        ResponseEntity<Iterable<User>> reUpper = adminUserController.searchUserFilterByRole(searchNameUpper, searchRole, principal);
+
+        assertEquals(HttpStatus.OK, reUpper.getStatusCode());
+        assertEquals(expectedReturnUpper, reUpper.getBody());
+
+        String searchNameLower = "a";
+        Iterable<User> expectedReturnLower = AdminTestTools.matchingUsernameAndRole(testUsers, searchNameLower, searchRole);
+        Mockito.when(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchNameLower, searchRole)).thenReturn(expectedReturnLower);
+
+        ResponseEntity<Iterable<User>> reLower = adminUserController.searchUserFilterByRole(searchNameLower, searchRole, principal);
+
+        assertEquals(HttpStatus.OK, reLower.getStatusCode());
+        assertEquals(expectedReturnLower, reLower.getBody());
+
+        assertEquals(expectedReturnLower, expectedReturnUpper);
     }
 
     @Test
