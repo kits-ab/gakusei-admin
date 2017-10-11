@@ -71,6 +71,15 @@ public class AdminUserControllerTest {
     }
 
     @Test
+    public void resetPasswordNotFound() {
+        Mockito.when(adminUserRepository.findOne(testUser.getUsername())).thenReturn(null);
+
+        ResponseEntity<User> re = adminUserController.resetPassword(testUser, principal);
+
+        assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
+    }
+
+    @Test
     public void changeRole() throws Exception {
         Mockito.when(adminUserRepository.findOne(testUser.getUsername())).thenReturn(testUser);
         testUser.setRole("newRole");
@@ -83,12 +92,30 @@ public class AdminUserControllerTest {
     }
 
     @Test
+    public void changeRoleNotFound() {
+        Mockito.when(adminUserRepository.findOne(testUser.getUsername())).thenReturn(null);
+
+        ResponseEntity<User> re = adminUserController.changeRole(testUser, principal);
+
+        assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
+    }
+
+    @Test
     public void deleteUser() throws Exception {
         Mockito.when(adminUserRepository.exists(testUser.getUsername())).thenReturn(true);
 
         ResponseEntity<User> re = adminUserController.deleteUser(testUser.getUsername(), principal);
 
         assertEquals(HttpStatus.OK, re.getStatusCode());
+    }
+
+    @Test
+    public void deleteUserNotFound() {
+        Mockito.when(adminUserRepository.exists(testUser.getUsername())).thenReturn(false);
+
+        ResponseEntity<User> re = adminUserController.deleteUser(testUser.getUsername(), principal);
+
+        assertEquals(HttpStatus.NOT_FOUND, re.getStatusCode());
     }
 
 }
