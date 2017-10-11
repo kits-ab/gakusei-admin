@@ -34,12 +34,12 @@ public class AdminUserController {
     private final String NO_ROLE_PROVIDED = "NO_ROLE_PROVIDED";
 
     @RequestMapping(
-            value = "/api/users/{searchString}/{role}",
+            value = "/api/users/search",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Iterable<User>> searchUserFilterByRole(@PathVariable(value = "searchString") String searchString,
-                                                                 @PathVariable(value = "role") String role,
+    public ResponseEntity<Iterable<User>> searchUserFilterByRole(@RequestParam(value = "searchString") String searchString,
+                                                                 @RequestParam(value = "role") String role,
                                                                  Principal principal) {
         logEvent(adminUserRepository.findOne(principal.getName()), searchString + " : " + role, "SEARCH");
 
