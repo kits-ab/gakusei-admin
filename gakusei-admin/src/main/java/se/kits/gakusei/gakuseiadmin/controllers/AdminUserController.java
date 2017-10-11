@@ -51,7 +51,7 @@ public class AdminUserController {
             role = "";
         }
 
-        return new ResponseEntity<>(adminUserRepository.findByNameContainsFilterByRole(searchString, role), HttpStatus.OK);
+        return new ResponseEntity<>(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchString, role), HttpStatus.OK);
     }
 
     @RequestMapping(
