@@ -69,6 +69,10 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
+        if (!quizRepository.findByName(quiz.getName()).isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(quizRepository.save(quiz), HttpStatus.CREATED);
     }
 
@@ -77,9 +81,9 @@ public class AdminQuizController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity<String> deleteQuiz(@PathVariable(value="quizId") Long quizId) {
-        if (!this.quizRepository.exists(quizId))
+        if (!this.quizRepository.exists(quizId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+        }
         quizRepository.delete(quizId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -112,6 +116,25 @@ public class AdminQuizController {
         }
         return new ResponseEntity<>(newMyQuizNugget, HttpStatus.CREATED);
     }
+
+    @RequestMapping(
+            value = "/api/quizes/nuggets/list",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<?> createQuizNuggets(@RequestBody List<HashMap<String, Object>> myQuizNuggets) {
+        List<HashMap<String, Object>> newMyQuizNuggets = new ArrayList<>();
+        try {
+            for (HashMap<String, Object> quizNugget : myQuizNuggets) {
+                newMyQuizNuggets.
+                        add(adminQuizHandler.createAndValidateQuizNugget(quizNugget));
+            }
+        } catch (FormValidator.FormException exc) {
+            return new ResponseEntity<>(exc.getErrMap(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Iterable<HashMap<String, Object>>>(newMyQuizNuggets, HttpStatus.CREATED);
+    }
+
 
     @RequestMapping(
             value = "/api/quizes/nuggets",

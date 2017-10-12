@@ -1,11 +1,12 @@
 package se.kits.gakusei.gakuseiadmin.tools;
 
-import se.kits.gakusei.content.model.Course;
-import se.kits.gakusei.content.model.Book;
-import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.user.model.User;
+import se.kits.gakusei.content.model.*;
+import se.kits.gakusei.util.QuizHandler;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class AdminTestTools {
 
@@ -82,5 +83,32 @@ public class AdminTestTools {
         WordType wordType = toBeUpdated;
         wordType.setType(newType);
         return wordType;
+    }
+
+    public static HashMap<String, Object> createQuestion(Quiz quiz, int nbrOfIncorrectAnswers) {
+        HashMap<String, Object> question = new HashMap<>();
+        question.put(QuizHandler.QN_QUESTION, "question");
+        question.put(QuizHandler.QN_CORRECT_ANSWER, "correct");
+        question.put(QuizHandler.QN_QUIZ_REF, quiz.getId());
+        question.put(QuizHandler.QN_INCORRECT_ANSWERS, createIncorrectAnswers(nbrOfIncorrectAnswers));
+        return question;
+    }
+
+    private static QuizNugget createQuizNugget(Quiz quiz, String suffix) {
+        QuizNugget nugget = new QuizNugget();
+        nugget.setQuiz(quiz);
+        nugget.setQuestion("Question " + suffix);
+        nugget.setCorrectAnswer("correct alternative");
+        return nugget;
+    }
+
+    private static List<HashMap<String, Object>> createIncorrectAnswers(int nbrOfIncorrectAnswers) {
+        List<HashMap<String, Object>> incorrectAnswers = new ArrayList<>();
+        for (int i = 1; i <= nbrOfIncorrectAnswers; i++) {
+            HashMap<String, Object> incorrectAnswer = new HashMap<>();
+            incorrectAnswer.put(QuizHandler.IA_INCORRECT_ANSWERS, "incorrect alternative " + Integer.toString(i));
+            incorrectAnswers.add(incorrectAnswer);
+        }
+        return incorrectAnswers;
     }
 }
