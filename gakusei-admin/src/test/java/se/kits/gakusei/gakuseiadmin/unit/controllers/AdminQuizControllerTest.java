@@ -1,10 +1,10 @@
 package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -16,11 +16,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
+import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -136,5 +139,41 @@ public class AdminQuizControllerTest {
         } catch (Exception exc) { }
 
         Assert.assertEquals(false, adminQuizRepository.exists(testQuiz.getId()));
+    }
+
+    @Test
+    public void testCreateQuizNuggetsOK() throws Exception {
+        Quiz quiz = adminQuizRepository.save(testQuiz);
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        // create questions first after testQuiz is saved to make sure we have the correct quiz id
+        questions.add(AdminTestTools.createQuestion(quiz, 3));
+        String questionsString = new ObjectMapper().writeValueAsString(questions);
+
+
+        try {
+            mockMvc.perform(post(String.format("/api/quizes/nuggets/list"))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(questionsString))
+                    .andExpect(status().isCreated());
+        } catch (Exception exc) { }
+    }
+
+    @Test
+    public void testCreateQuizNuggetsBadRequest() throws Exception {
+        Quiz quiz = adminQuizRepository.save(testQuiz);
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        // create questions first after testQuiz is saved to make sure we have the correct quiz id
+        // create question with not enough incorrect answers provided
+        questions.add(AdminTestTools.createQuestion(quiz,2));
+        String questionsString = new ObjectMapper().writeValueAsString(questions);
+
+
+        try {
+            mockMvc.perform(post(String.format("/api/quizes/nuggets/list"))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(questionsString))
+                    .andExpect(status().isBadRequest());
+        } catch (Exception exc) { }
+
     }
 }
