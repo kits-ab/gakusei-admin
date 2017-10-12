@@ -30,9 +30,6 @@ public class AdminUserController {
     @Autowired
     EventRepository eventRepository;
 
-    private final String NO_SEARCHSTRING_PROVIDED = "NO_SEARCHSTRING_PROVIDED";
-    private final String NO_ROLE_PROVIDED = "NO_ROLE_PROVIDED";
-
     @RequestMapping(
             value = "/api/users/search",
             method = RequestMethod.GET,
@@ -42,14 +39,6 @@ public class AdminUserController {
                                                                  @RequestParam(value = "role") String role,
                                                                  Principal principal) {
         logEvent(adminUserRepository.findOne(principal.getName()), searchString + " : " + role, "SEARCH");
-
-        if(searchString.equals(NO_SEARCHSTRING_PROVIDED)){
-            searchString = "";
-        }
-
-        if(role.equals(NO_ROLE_PROVIDED)){
-            role = "";
-        }
 
         return new ResponseEntity<>(adminUserRepository.findByUsernameContainingIgnoreCaseAndRoleContainingIgnoreCase(searchString, role), HttpStatus.OK);
     }
