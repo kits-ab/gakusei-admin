@@ -7,7 +7,7 @@ import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
-import se.kits.gakusei.gakuseiadmin.util.ParserFailureException;
+import se.kits.gakusei.util.ParserFailureException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
