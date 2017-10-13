@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
-import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
+import se.kits.gakusei.content.repository.QuizRepository;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
 import java.io.File;
@@ -39,7 +39,7 @@ public class AdminQuizControllerTest {
     private WebApplicationContext wac;
 
     @Autowired
-    private AdminQuizRepository adminQuizRepository;
+    private QuizRepository quizRepository;
 
     private MockMvc mockMvc;
 
@@ -73,7 +73,7 @@ public class AdminQuizControllerTest {
                 e.printStackTrace();
             }
 
-            Iterable<Quiz> testQuiz = adminQuizRepository.findAll();
+            Iterable<Quiz> testQuiz = quizRepository.findAll();
 
             for (int counter=1; counter<4; counter++) {
                 boolean exists = false;
@@ -107,13 +107,13 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
 
-        List<Quiz> quizLs = adminQuizRepository.findByName(testQuiz.getName());
+        List<Quiz> quizLs = quizRepository.findByName(testQuiz.getName());
         Assert.assertTrue(quizLs.size()>0);
     }
 
     @Test
     public void testUpdateQuiz() {
-        Quiz quiz = adminQuizRepository.save(testQuiz);
+        Quiz quiz = quizRepository.save(testQuiz);
         String quizString = String.format("{ \"id\": \"%d\", \"name\": \"Test quiz\", \"description\": \"Test description NEW\"}",
                 quiz.getId());
 
@@ -124,26 +124,26 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Quiz quiz1 = adminQuizRepository.findOne(quiz.getId());
+        Quiz quiz1 = quizRepository.findOne(quiz.getId());
         Assert.assertEquals(quiz.getId(), quiz1.getId());
         Assert.assertEquals(quiz.getDescription()+" NEW", quiz1.getDescription());
     }
 
     @Test
     public void testDeleteQuiz() {
-        Quiz quiz = adminQuizRepository.save(testQuiz);
+        Quiz quiz = quizRepository.save(testQuiz);
 
         try {
             mockMvc.perform(delete(String.format("/api/quizes/%d", quiz.getId())))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Assert.assertEquals(false, adminQuizRepository.exists(testQuiz.getId()));
+        Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
     }
 
     @Test
     public void testCreateQuizNuggetsOK() throws Exception {
-        Quiz quiz = adminQuizRepository.save(testQuiz);
+        Quiz quiz = quizRepository.save(testQuiz);
         List<HashMap<String, Object>> questions = new ArrayList<>();
         // create questions first after testQuiz is saved to make sure we have the correct quiz id
         questions.add(AdminTestTools.createQuestion(quiz, 3));
@@ -160,7 +160,7 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testCreateQuizNuggetsBadRequest() throws Exception {
-        Quiz quiz = adminQuizRepository.save(testQuiz);
+        Quiz quiz = quizRepository.save(testQuiz);
         List<HashMap<String, Object>> questions = new ArrayList<>();
         // create questions first after testQuiz is saved to make sure we have the correct quiz id
         // create question with not enough incorrect answers provided
