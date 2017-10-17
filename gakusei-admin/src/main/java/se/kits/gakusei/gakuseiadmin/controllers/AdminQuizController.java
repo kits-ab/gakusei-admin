@@ -11,7 +11,7 @@ import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
 import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
-import se.kits.gakusei.gakuseiadmin.content.AdminQuizRepository;
+import se.kits.gakusei.content.repository.QuizRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class AdminQuizController {
 
     @Autowired
-    AdminQuizRepository quizRepository;
+    QuizRepository quizRepository;
 
     @Autowired
     AdminQuizHandler adminQuizHandler;
