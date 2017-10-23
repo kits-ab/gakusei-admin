@@ -174,7 +174,19 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<IncorrectAnswers> createIncorrectAnswer(@RequestBody IncorrectAnswers incorrectAnswers){
-        System.out.println("Creating; " + incorrectAnswers.getIncorrectAnswer());
         return new ResponseEntity<>(incorrectAnswerRepository.save(incorrectAnswers), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(
+            value = "/api/quizes/nuggets/incorrectAnswers/{incorrectAnswerId}",
+            method = RequestMethod.DELETE
+    )
+    public ResponseEntity<String> deleteIncorrectAnswer(@PathVariable(value = "incorrectAnswerId") Long incorrectAnswerId){
+        if(incorrectAnswerRepository.exists(incorrectAnswerId)) {
+            incorrectAnswerRepository.delete(incorrectAnswerId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
