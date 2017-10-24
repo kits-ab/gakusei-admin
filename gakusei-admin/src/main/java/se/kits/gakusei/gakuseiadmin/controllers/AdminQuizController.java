@@ -69,7 +69,7 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
-        if (!quizRepository.findByName(quiz.getName()).isEmpty()) {
+        if (quizRepository.findByName(quiz.getName()) != null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 

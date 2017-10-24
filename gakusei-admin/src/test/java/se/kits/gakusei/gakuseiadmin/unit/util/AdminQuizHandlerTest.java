@@ -12,6 +12,7 @@ import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
+import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 
 import java.util.ArrayList;
@@ -91,6 +92,8 @@ public class AdminQuizHandlerTest {
 
         assertTrue(quizNugget.containsKey("id"));
         assertTrue(this.quizNuggetRepository.exists((Long) quizNugget.get("id")));
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -113,5 +116,7 @@ public class AdminQuizHandlerTest {
         } catch (Exception exc) {
             assert false;
         }
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 }

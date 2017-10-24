@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
+import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
@@ -40,6 +42,12 @@ public class AdminQuizControllerTest {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizNuggetRepository quizNuggetRepository;
+
+    @Autowired
+    private IncorrectAnswerRepository incorrectAnswerRepository;
 
     private MockMvc mockMvc;
 
@@ -93,7 +101,7 @@ public class AdminQuizControllerTest {
             e.printStackTrace();
         }
 
-
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -107,8 +115,10 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
 
-        List<Quiz> quizLs = quizRepository.findByName(testQuiz.getName());
-        Assert.assertTrue(quizLs.size()>0);
+        Quiz quiz = quizRepository.findByName(testQuiz.getName());
+        Assert.assertTrue(quiz != null);
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -127,6 +137,8 @@ public class AdminQuizControllerTest {
         Quiz quiz1 = quizRepository.findOne(quiz.getId());
         Assert.assertEquals(quiz.getId(), quiz1.getId());
         Assert.assertEquals(quiz.getDescription()+" NEW", quiz1.getDescription());
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -139,6 +151,8 @@ public class AdminQuizControllerTest {
         } catch (Exception exc) { }
 
         Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -156,6 +170,8 @@ public class AdminQuizControllerTest {
                     .content(questionsString))
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -175,5 +191,6 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isBadRequest());
         } catch (Exception exc) { }
 
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 }
