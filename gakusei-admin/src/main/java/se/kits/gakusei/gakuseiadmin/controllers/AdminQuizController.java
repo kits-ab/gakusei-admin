@@ -6,7 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import se.kits.gakusei.content.model.IncorrectAnswers;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
 import se.kits.gakusei.gakuseiadmin.util.FormValidator;
@@ -29,6 +31,9 @@ public class AdminQuizController {
 
     @Autowired
     QuizNuggetRepository quizNuggetRepository;
+
+    @Autowired
+    IncorrectAnswerRepository incorrectAnswerRepository;
 
     @RequestMapping(
             value = "/api/quizes/csv",
@@ -158,8 +163,34 @@ public class AdminQuizController {
         if (!this.quizNuggetRepository.exists(quizNuggetId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         quizNuggetRepository.delete(quizNuggetId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "/api/quizes/nuggets/incorrectAnswers",
+            method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<IncorrectAnswers> createIncorrectAnswer(@RequestBody IncorrectAnswers incorrectAnswers){
+        if(quizNuggetRepository.exists(incorrectAnswers.getQuizNugget().getId())) {
+            return new ResponseEntity<>(incorrectAnswerRepository.save(incorrectAnswers), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @RequestMapping(
+            value = "/api/quizes/nuggets/incorrectAnswers/{incorrectAnswerId}",
+            method = RequestMethod.DELETE
+    )
+    public ResponseEntity<String> deleteIncorrectAnswer(@PathVariable(value = "incorrectAnswerId") Long incorrectAnswerId){
+        if(incorrectAnswerRepository.exists(incorrectAnswerId)) {
+            incorrectAnswerRepository.delete(incorrectAnswerId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
