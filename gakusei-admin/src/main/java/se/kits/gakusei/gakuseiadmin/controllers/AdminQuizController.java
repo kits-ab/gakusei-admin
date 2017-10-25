@@ -174,7 +174,11 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<IncorrectAnswers> createIncorrectAnswer(@RequestBody IncorrectAnswers incorrectAnswers){
-        return new ResponseEntity<>(incorrectAnswerRepository.save(incorrectAnswers), HttpStatus.CREATED);
+        if(quizNuggetRepository.exists(incorrectAnswers.getQuizNugget().getId())) {
+            return new ResponseEntity<>(incorrectAnswerRepository.save(incorrectAnswers), HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(
