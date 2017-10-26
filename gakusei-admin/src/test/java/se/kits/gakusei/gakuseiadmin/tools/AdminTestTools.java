@@ -8,6 +8,8 @@ import se.kits.gakusei.util.QuizHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class AdminTestTools {
 
@@ -137,4 +139,17 @@ public class AdminTestTools {
         answer.setQuizNugget(quizNugget);
         return answer;
     }
+
+    public static List<QuizNugget> generateQuizNuggets(Quiz quiz, int nbrOfNuggets) {
+        List<QuizNugget> quizNuggets = new ArrayList<>();
+        for (int i = 1; i <= nbrOfNuggets; i++) {
+            quizNuggets.add(createQuizNugget(quiz, Integer.toString(i)));
+        }
+        return quizNuggets;
+    }
+
+    public static List<QuizNugget> iterableToQuizNuggetList(Iterable<QuizNugget> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
+    }
+
 }

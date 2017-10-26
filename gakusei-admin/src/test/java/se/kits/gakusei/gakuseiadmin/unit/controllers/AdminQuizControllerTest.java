@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import se.kits.gakusei.content.model.IncorrectAnswers;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
@@ -24,7 +25,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -145,13 +150,25 @@ public class AdminQuizControllerTest {
     @Test
     public void testDeleteQuiz() {
         Quiz quiz = quizRepository.save(testQuiz);
+        List<QuizNugget> quizNuggets = AdminTestTools.iterableToQuizNuggetList(quizNuggetRepository.save(AdminTestTools
+                        .generateQuizNuggets(quiz,2)));
+        quizNuggets.stream().map(quizNugget -> incorrectAnswerRepository
+                .save(AdminTestTools.generateIncorrectAnswers(quizNugget, 3)));
 
         try {
             mockMvc.perform(delete(String.format("/api/quizes/%d", quiz.getId())))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
+        List<Long> quizNuggetIds = quizNuggets.stream()
+                .map(quizNugget -> quizNugget.getId()).collect(Collectors.toList());
+        List<QuizNugget> quizNuggetsAfterDelete = AdminTestTools.iterableToQuizNuggetList(quizNuggetRepository
+                .findAll(quizNuggetIds));
+        List<List<IncorrectAnswers>> answersAfterDelete = new ArrayList<>();
+        quizNuggetIds.stream().map(id -> answersAfterDelete.add(incorrectAnswerRepository.findByQuizNuggetId(id)));
         Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
+        Assert.assertTrue(quizNuggetsAfterDelete.isEmpty());
+        Assert.assertTrue(answersAfterDelete.isEmpty());
     }
 
     @Test
