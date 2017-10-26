@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
@@ -88,7 +89,7 @@ public class AdminQuizController {
         if (!this.quizRepository.exists(quizId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        quizRepository.delete(quizId);
+        adminQuizHandler.handleDeleteQuiz(quizId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -159,12 +160,11 @@ public class AdminQuizController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity<String> deleteQuizNugget(@PathVariable(value="quizNuggetId") Long quizNuggetId) {
-        if (!this.quizNuggetRepository.exists(quizNuggetId)) {
+        QuizNugget quizNugget = quizNuggetRepository.findOne(quizNuggetId);
+        if (quizNugget == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        incorrectAnswerRepository.deleteByQuizNuggetId(quizNuggetId);
-        quizNuggetRepository.delete(quizNuggetId);
+        adminQuizHandler.handleDeleteQuizNugget(quizNugget.getQuiz().getId());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
