@@ -44,6 +44,9 @@ public class AdminQuizControllerTest {
     private MockMvc mockMvc;
 
     private Quiz testQuiz;
+    private String questions;
+    private String questionsWithTooFewAnswers;
+    private Quiz savedQuiz;
 
     @Before
     public void setUp() throws Exception {
@@ -52,6 +55,10 @@ public class AdminQuizControllerTest {
         testQuiz = new Quiz();
         testQuiz.setName("Test quiz");
         testQuiz.setDescription("Test description");
+
+        savedQuiz = quizRepository.save(testQuiz);
+        questions = AdminTestTools.generateQuestionString(savedQuiz, 3);
+        questionsWithTooFewAnswers = AdminTestTools.generateQuestionString(savedQuiz, 2);
     }
 
     @Test
@@ -143,35 +150,20 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testCreateQuizNuggetsOK() throws Exception {
-        Quiz quiz = quizRepository.save(testQuiz);
-        List<HashMap<String, Object>> questions = new ArrayList<>();
-        // create questions first after testQuiz is saved to make sure we have the correct quiz id
-        questions.add(AdminTestTools.createQuestion(quiz, 3));
-        String questionsString = new ObjectMapper().writeValueAsString(questions);
-
-
         try {
             mockMvc.perform(post(String.format("/api/quizes/nuggets/list"))
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                    .content(questionsString))
+                    .content(questions))
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
     }
 
     @Test
     public void testCreateQuizNuggetsBadRequest() throws Exception {
-        Quiz quiz = quizRepository.save(testQuiz);
-        List<HashMap<String, Object>> questions = new ArrayList<>();
-        // create questions first after testQuiz is saved to make sure we have the correct quiz id
-        // create question with not enough incorrect answers provided
-        questions.add(AdminTestTools.createQuestion(quiz,2));
-        String questionsString = new ObjectMapper().writeValueAsString(questions);
-
-
         try {
             mockMvc.perform(post(String.format("/api/quizes/nuggets/list"))
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                    .content(questionsString))
+                    .content(questionsWithTooFewAnswers))
                     .andExpect(status().isBadRequest());
         } catch (Exception exc) { }
 

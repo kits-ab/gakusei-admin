@@ -1,5 +1,6 @@
 package se.kits.gakusei.gakuseiadmin.tools;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import se.kits.gakusei.user.model.User;
 import se.kits.gakusei.content.model.*;
 import se.kits.gakusei.util.QuizHandler;
@@ -110,5 +111,11 @@ public class AdminTestTools {
             incorrectAnswers.add(incorrectAnswer);
         }
         return incorrectAnswers;
+    }
+
+    public static String generateQuestionString(Quiz quiz, int nbrOfIncorrectAnswers) throws Exception{
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        questions.add(createQuestion(quiz, nbrOfIncorrectAnswers));
+        return new ObjectMapper().writeValueAsString(questions);
     }
 }
