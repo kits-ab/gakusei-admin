@@ -69,9 +69,9 @@ public class AdminQuizHandler extends QuizHandler {
                 errors.put(err_key, exc.getErrMap());
             }
             if (!errors.containsKey(err_key) && onUpdate) {
-                if (!this.incorrectAnswerRepository.existsByIdAndQuizNuggetId(
-                        new Long((int) myIncorrectAnswer_map.get(this.QN_ID)), quizNuggetId))
+                if (!incorrectAnswerRepository.exists(new Long((int) myIncorrectAnswer_map.get(this.QN_ID)))) {
                     errors.put(err_key, "Does not exist");
+                }
             }
             i++;
         }
