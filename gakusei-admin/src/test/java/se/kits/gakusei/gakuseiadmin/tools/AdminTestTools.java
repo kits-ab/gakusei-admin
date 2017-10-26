@@ -95,6 +95,10 @@ public class AdminTestTools {
         return question;
     }
 
+    public static QuizNugget generateQuizNugget(Quiz quiz) {
+        return createQuizNugget(quiz, "");
+    }
+
     private static QuizNugget createQuizNugget(Quiz quiz, String suffix) {
         QuizNugget nugget = new QuizNugget();
         nugget.setQuiz(quiz);
@@ -117,5 +121,20 @@ public class AdminTestTools {
         List<HashMap<String, Object>> questions = new ArrayList<>();
         questions.add(createQuestion(quiz, nbrOfIncorrectAnswers));
         return new ObjectMapper().writeValueAsString(questions);
+    }
+
+    public static List<IncorrectAnswers> generateIncorrectAnswers(QuizNugget quizNugget, int nbrOfIncorrectAnswers) {
+        List<IncorrectAnswers> incorrectAnswers = new ArrayList<>();
+         for (int i = 1; i <= nbrOfIncorrectAnswers; i++) {
+            incorrectAnswers.add(createIncorrectAnswer(quizNugget, Integer.toString(i)));
+        }
+        return incorrectAnswers;
+    }
+
+    private static IncorrectAnswers createIncorrectAnswer(QuizNugget quizNugget, String suffix) {
+        IncorrectAnswers answer = new IncorrectAnswers();
+        answer.setIncorrectAnswer("incorrect " + suffix);
+        answer.setQuizNugget(quizNugget);
+        return answer;
     }
 }

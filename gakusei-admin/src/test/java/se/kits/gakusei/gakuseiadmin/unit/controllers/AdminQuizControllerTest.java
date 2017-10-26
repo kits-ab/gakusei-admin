@@ -14,6 +14,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.model.QuizNugget;
+import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
+import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
@@ -37,6 +40,12 @@ public class AdminQuizControllerTest {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizNuggetRepository quizNuggetRepository;
+
+    @Autowired
+    private IncorrectAnswerRepository incorrectAnswerRepository;
 
     private MockMvc mockMvc;
 
@@ -164,5 +173,19 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isBadRequest());
         } catch (Exception exc) { }
 
+    }
+
+    @Test
+    public void testDeleteQuizNuggetsOk() throws Exception {
+        QuizNugget quizNugget = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(savedQuiz));
+        incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswers(quizNugget, 3));
+
+        try {
+            mockMvc.perform(delete(String.format("/api/quizes/nuggets/%d", quizNugget.getId())))
+                    .andExpect(status().isOk());
+        } catch (Exception exc) { }
+
+        Assert.assertTrue(incorrectAnswerRepository.findByQuizNuggetId(quizNugget.getId()).isEmpty());
+        Assert.assertFalse(quizNuggetRepository.exists(quizNugget.getId()));
     }
 }
