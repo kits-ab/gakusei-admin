@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
 import se.kits.gakusei.gakuseiadmin.util.FormValidator;
@@ -29,6 +30,9 @@ public class AdminQuizController {
 
     @Autowired
     QuizNuggetRepository quizNuggetRepository;
+
+    @Autowired
+    IncorrectAnswerRepository incorrectAnswerRepository;
 
     @RequestMapping(
             value = "/api/quizes/csv",
@@ -159,6 +163,7 @@ public class AdminQuizController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        incorrectAnswerRepository.deleteByQuizNuggetId(quizNuggetId);
         quizNuggetRepository.delete(quizNuggetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
