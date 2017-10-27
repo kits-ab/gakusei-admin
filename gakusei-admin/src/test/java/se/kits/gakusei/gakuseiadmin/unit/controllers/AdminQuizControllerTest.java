@@ -14,7 +14,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import se.kits.gakusei.content.model.IncorrectAnswers;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
@@ -192,5 +194,84 @@ public class AdminQuizControllerTest {
         } catch (Exception exc) { }
 
         AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
+    }
+
+    @Test
+    public void testCreateIncorrectAnswerOK() throws Exception {
+        testQuiz = quizRepository.save(testQuiz);
+
+        QuizNugget qn = new QuizNugget();
+        qn.setCorrectAnswer("Answer");
+        qn.setQuestion("Question");
+        qn.setQuiz(testQuiz);
+        qn = quizNuggetRepository.save(qn);
+
+        IncorrectAnswers ia = new IncorrectAnswers();
+        ia.setIncorrectAnswer("Incorrect");
+        ia.setQuizNugget(qn);
+
+        String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
+
+        try {
+            mockMvc.perform((post("/api/quizes/nuggets/incorrectAnswers"))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(incorrectAnswerString))
+                    .andExpect(status().isCreated());
+        } catch (Exception e) { }
+    }
+
+    @Test
+    public void testCreateIncorrectAnswerQuizNotFound() throws Exception {
+        IncorrectAnswers ia = new IncorrectAnswers();
+        ia.setIncorrectAnswer("Incorrect");
+        ia.setQuizNugget(new QuizNugget());
+
+        String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
+
+        try {
+            mockMvc.perform((post("/api/quizes/nuggets/incorrectAnswers"))
+                    .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                    .content(incorrectAnswerString))
+                    .andExpect(status().isNotFound());
+        } catch (Exception e) { }
+    }
+
+    @Test
+    public void testDeleteIncorrectAnswerOK() throws Exception {
+        testQuiz = quizRepository.save(testQuiz);
+
+        QuizNugget qn = new QuizNugget();
+        qn.setCorrectAnswer("Answer");
+        qn.setQuestion("Question");
+        qn.setQuiz(testQuiz);
+        qn = quizNuggetRepository.save(qn);
+
+        IncorrectAnswers ia = new IncorrectAnswers();
+        ia.setIncorrectAnswer("Incorrect");
+        ia.setQuizNugget(qn);
+        ia = incorrectAnswerRepository.save(ia);
+
+        try {
+            mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isOk());
+        } catch (Exception e) { }
+    }
+
+    @Test
+    public void testDeleteIncorrectAnswerNotFound() throws Exception {
+        testQuiz = quizRepository.save(testQuiz);
+
+        QuizNugget qn = new QuizNugget();
+        qn.setCorrectAnswer("Answer");
+        qn.setQuestion("Question");
+        qn.setQuiz(testQuiz);
+        qn = quizNuggetRepository.save(qn);
+
+        IncorrectAnswers ia = new IncorrectAnswers();
+        ia.setIncorrectAnswer("Incorrect");
+        ia.setQuizNugget(qn);
+
+        try {
+            mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isNotFound());
+        } catch (Exception e) { }
     }
 }
