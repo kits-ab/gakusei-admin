@@ -91,7 +91,18 @@ public class AdminTestTools {
         return wordType;
     }
 
-    public static HashMap<String, Object> createQuestion(Quiz quiz, int nbrOfIncorrectAnswers) {
+    public static Quiz generateQuiz(String title) {
+        return createQuiz(title, "");
+    }
+
+    private static Quiz createQuiz(String title, String suffix) {
+        Quiz quiz = new Quiz();
+        quiz.setName(title);
+        quiz.setDescription("Test description");
+        return quiz;
+    }
+
+    private static HashMap<String, Object> createQuestion(Quiz quiz, int nbrOfIncorrectAnswers) {
         HashMap<String, Object> question = new HashMap<>();
         question.put(QuizHandler.QN_QUESTION, "question");
         question.put(QuizHandler.QN_CORRECT_ANSWER, "correct");
@@ -126,6 +137,10 @@ public class AdminTestTools {
         List<HashMap<String, Object>> questions = new ArrayList<>();
         questions.add(createQuestion(quiz, nbrOfIncorrectAnswers));
         return new ObjectMapper().writeValueAsString(questions);
+    }
+
+    public static IncorrectAnswers generateIncorrectAnswer(QuizNugget quizNugget) {
+        return createIncorrectAnswer(quizNugget, "");
     }
 
     public static List<IncorrectAnswers> generateIncorrectAnswers(QuizNugget quizNugget, int nbrOfIncorrectAnswers) {

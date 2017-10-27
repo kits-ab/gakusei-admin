@@ -1,6 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,13 +61,14 @@ public class AdminQuizControllerTest {
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
-        Quiz quiz = new Quiz();
-        quiz.setName("Test quiz 1");
-        quiz.setDescription("Test description");
-
-        testQuiz = quizRepository.save(quiz);
+        testQuiz = quizRepository.save(AdminTestTools.generateQuiz("Test quiz 1"));
         questions = AdminTestTools.generateQuestionString(testQuiz, 3);
         questionsWithTooFewAnswers = AdminTestTools.generateQuestionString(testQuiz, 2);
+    }
+
+    @After
+    public void tearDown() {
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -101,14 +103,12 @@ public class AdminQuizControllerTest {
                 Assert.assertEquals(true, exists);
             }
 
-
         } catch (FileNotFoundException e){
             e.printStackTrace();
         } catch (IOException e){
             e.printStackTrace();
         }
 
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -122,10 +122,7 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
 
-        Quiz quiz = quizRepository.findByName(testQuiz.getName());
-        Assert.assertTrue(quiz != null);
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
+        Assert.assertTrue(quizRepository.findByName(testQuiz.getName()) != null);
     }
 
     @Test
@@ -143,8 +140,6 @@ public class AdminQuizControllerTest {
         Quiz quiz1 = quizRepository.findOne(testQuiz.getId());
         Assert.assertEquals(testQuiz.getId(), quiz1.getId());
         Assert.assertEquals(testQuiz.getDescription()+" NEW", quiz1.getDescription());
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -160,16 +155,16 @@ public class AdminQuizControllerTest {
         } catch (Exception exc) { }
 
         List<Long> quizNuggetIds = quizNuggets.stream()
-                .map(quizNugget -> quizNugget.getId()).collect(Collectors.toList());
+                .map(QuizNugget::getId).collect(Collectors.toList());
         List<QuizNugget> quizNuggetsAfterDelete = AdminTestTools.iterableToQuizNuggetList(quizNuggetRepository
                 .findAll(quizNuggetIds));
+
         List<List<IncorrectAnswers>> answersAfterDelete = new ArrayList<>();
         quizNuggetIds.stream().map(id -> answersAfterDelete.add(incorrectAnswerRepository.findByQuizNuggetId(id)));
+
         Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
         Assert.assertTrue(quizNuggetsAfterDelete.isEmpty());
         Assert.assertTrue(answersAfterDelete.isEmpty());
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -180,8 +175,6 @@ public class AdminQuizControllerTest {
                     .content(questions))
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -192,8 +185,6 @@ public class AdminQuizControllerTest {
                     .content(questionsWithTooFewAnswers))
                     .andExpect(status().isBadRequest());
         } catch (Exception exc) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -208,21 +199,11 @@ public class AdminQuizControllerTest {
 
         Assert.assertTrue(incorrectAnswerRepository.findByQuizNuggetId(quizNugget.getId()).isEmpty());
         Assert.assertFalse(quizNuggetRepository.exists(quizNugget.getId()));
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
-
     }
 
     public void testCreateIncorrectAnswerOK() throws Exception {
-        QuizNugget qn = new QuizNugget();
-        qn.setCorrectAnswer("Answer");
-        qn.setQuestion("Question");
-        qn.setQuiz(testQuiz);
-        qn = quizNuggetRepository.save(qn);
-
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(qn);
+        QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(qn);
 
         String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
 
@@ -232,16 +213,11 @@ public class AdminQuizControllerTest {
                     .content(incorrectAnswerString))
                     .andExpect(status().isCreated());
         } catch (Exception e) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
     public void testCreateIncorrectAnswerQuizNotFound() throws Exception {
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(new QuizNugget());
-
+        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(new QuizNugget());
         String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
 
         try {
@@ -256,40 +232,21 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testDeleteIncorrectAnswerOK() throws Exception {
-        QuizNugget qn = new QuizNugget();
-        qn.setCorrectAnswer("Answer");
-        qn.setQuestion("Question");
-        qn.setQuiz(testQuiz);
-        qn = quizNuggetRepository.save(qn);
-
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(qn);
-        ia = incorrectAnswerRepository.save(ia);
+        QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        IncorrectAnswers ia = incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswer(qn));
 
         try {
             mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isOk());
         } catch (Exception e) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
     public void testDeleteIncorrectAnswerNotFound() throws Exception {
-        QuizNugget qn = new QuizNugget();
-        qn.setCorrectAnswer("Answer");
-        qn.setQuestion("Question");
-        qn.setQuiz(testQuiz);
-        qn = quizNuggetRepository.save(qn);
-
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(qn);
+        QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(qn);
 
         try {
             mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isNotFound());
         } catch (Exception e) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 }
