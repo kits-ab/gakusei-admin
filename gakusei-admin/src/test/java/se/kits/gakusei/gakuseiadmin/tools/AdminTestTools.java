@@ -1,6 +1,9 @@
 package se.kits.gakusei.gakuseiadmin.tools;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
+import se.kits.gakusei.content.repository.QuizNuggetRepository;
+import se.kits.gakusei.content.repository.QuizRepository;
 import se.kits.gakusei.user.model.User;
 import se.kits.gakusei.content.model.*;
 import se.kits.gakusei.util.QuizHandler;
@@ -152,4 +155,9 @@ public class AdminTestTools {
         return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
     }
 
+    public static void tearDownQuiz(QuizRepository qr, QuizNuggetRepository qnr, IncorrectAnswerRepository iar) {
+        iar.deleteAll();
+        qnr.deleteAll();
+        qr.deleteAll();
+    }
 }
