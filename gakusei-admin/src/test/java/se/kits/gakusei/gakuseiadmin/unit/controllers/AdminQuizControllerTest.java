@@ -93,7 +93,7 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testCreateQuiz() {
-        String quizString = "{ \"name\": \"Test quiz\", \"description\": \"Test description\"}";
+        String quizString = "{ \"name\": \"Test quiz unique\", \"description\": \"Test description\"}";
 
         try {
             mockMvc.perform(post("/api/quizes")
