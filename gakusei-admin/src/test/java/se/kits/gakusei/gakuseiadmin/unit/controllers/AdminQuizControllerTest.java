@@ -1,6 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.unit.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +28,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,14 +54,21 @@ public class AdminQuizControllerTest {
     private MockMvc mockMvc;
 
     private Quiz testQuiz;
+    private String questions;
+    private String questionsWithTooFewAnswers;
 
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
-        testQuiz = new Quiz();
-        testQuiz.setName("Test quiz");
-        testQuiz.setDescription("Test description");
+        testQuiz = quizRepository.save(AdminTestTools.generateQuiz("Test quiz 1"));
+        questions = AdminTestTools.generateQuestionString(testQuiz, 3);
+        questionsWithTooFewAnswers = AdminTestTools.generateQuestionString(testQuiz, 2);
+    }
+
+    @After
+    public void tearDown() {
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -96,14 +103,9 @@ public class AdminQuizControllerTest {
                 Assert.assertEquals(true, exists);
             }
 
-
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
         } catch (IOException e){
             e.printStackTrace();
         }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
@@ -117,17 +119,13 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
 
-        Quiz quiz = quizRepository.findByName(testQuiz.getName());
-        Assert.assertTrue(quiz != null);
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
+        Assert.assertTrue(quizRepository.findByName(testQuiz.getName()) != null);
     }
 
     @Test
     public void testUpdateQuiz() {
-        Quiz quiz = quizRepository.save(testQuiz);
         String quizString = String.format("{ \"id\": \"%d\", \"name\": \"Test quiz\", \"description\": \"Test description NEW\"}",
-                quiz.getId());
+                testQuiz.getId());
 
         try {
             mockMvc.perform(put(String.format("/api/quizes"))
@@ -136,79 +134,73 @@ public class AdminQuizControllerTest {
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Quiz quiz1 = quizRepository.findOne(quiz.getId());
-        Assert.assertEquals(quiz.getId(), quiz1.getId());
-        Assert.assertEquals(quiz.getDescription()+" NEW", quiz1.getDescription());
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
+        Quiz quiz1 = quizRepository.findOne(testQuiz.getId());
+        Assert.assertEquals(testQuiz.getId(), quiz1.getId());
+        Assert.assertEquals(testQuiz.getDescription()+" NEW", quiz1.getDescription());
     }
 
     @Test
     public void testDeleteQuiz() {
-        Quiz quiz = quizRepository.save(testQuiz);
+        List<QuizNugget> quizNuggets = AdminTestTools.iterableToQuizNuggetList(quizNuggetRepository.save(AdminTestTools
+                        .generateQuizNuggets(testQuiz,2)));
+        quizNuggets.stream().map(quizNugget -> incorrectAnswerRepository
+                .save(AdminTestTools.generateIncorrectAnswers(quizNugget, 3)));
 
         try {
-            mockMvc.perform(delete(String.format("/api/quizes/%d", quiz.getId())))
+            mockMvc.perform(delete(String.format("/api/quizes/%d", testQuiz.getId())))
                     .andExpect(status().isOk());
         } catch (Exception exc) { }
 
-        Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
+        List<Long> quizNuggetIds = quizNuggets.stream()
+                .map(QuizNugget::getId).collect(Collectors.toList());
+        List<QuizNugget> quizNuggetsAfterDelete = AdminTestTools.iterableToQuizNuggetList(quizNuggetRepository
+                .findAll(quizNuggetIds));
 
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
+        List<List<IncorrectAnswers>> answersAfterDelete = new ArrayList<>();
+        quizNuggetIds.stream().map(id -> answersAfterDelete.add(incorrectAnswerRepository.findByQuizNuggetId(id)));
+
+        Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
+        Assert.assertTrue(quizNuggetsAfterDelete.isEmpty());
+        Assert.assertTrue(answersAfterDelete.isEmpty());
     }
 
     @Test
     public void testCreateQuizNuggetsOK() throws Exception {
-        Quiz quiz = quizRepository.save(testQuiz);
-        List<HashMap<String, Object>> questions = new ArrayList<>();
-        // create questions first after testQuiz is saved to make sure we have the correct quiz id
-        questions.add(AdminTestTools.createQuestion(quiz, 3));
-        String questionsString = new ObjectMapper().writeValueAsString(questions);
-
-
         try {
             mockMvc.perform(post(String.format("/api/quizes/nuggets/list"))
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                    .content(questionsString))
+                    .content(questions))
                     .andExpect(status().isCreated());
         } catch (Exception exc) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
     public void testCreateQuizNuggetsBadRequest() throws Exception {
-        Quiz quiz = quizRepository.save(testQuiz);
-        List<HashMap<String, Object>> questions = new ArrayList<>();
-        // create questions first after testQuiz is saved to make sure we have the correct quiz id
-        // create question with not enough incorrect answers provided
-        questions.add(AdminTestTools.createQuestion(quiz,2));
-        String questionsString = new ObjectMapper().writeValueAsString(questions);
-
-
         try {
             mockMvc.perform(post(String.format("/api/quizes/nuggets/list"))
                     .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                    .content(questionsString))
+                    .content(questionsWithTooFewAnswers))
                     .andExpect(status().isBadRequest());
         } catch (Exception exc) { }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
+    public void testDeleteQuizNuggetsOk() throws Exception {
+        QuizNugget quizNugget = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswers(quizNugget, 3));
+
+        try {
+            mockMvc.perform(delete(String.format("/api/quizes/nuggets/%d", quizNugget.getId())))
+                    .andExpect(status().isOk());
+        } catch (Exception exc) { }
+
+        Assert.assertTrue(incorrectAnswerRepository.findByQuizNuggetId(quizNugget.getId()).isEmpty());
+        Assert.assertFalse(quizNuggetRepository.exists(quizNugget.getId()));
+    }
+
     public void testCreateIncorrectAnswerOK() throws Exception {
-        testQuiz = quizRepository.save(testQuiz);
-
-        QuizNugget qn = new QuizNugget();
-        qn.setCorrectAnswer("Answer");
-        qn.setQuestion("Question");
-        qn.setQuiz(testQuiz);
-        qn = quizNuggetRepository.save(qn);
-
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(qn);
+        QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(qn);
 
         String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
 
@@ -222,10 +214,7 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testCreateIncorrectAnswerQuizNotFound() throws Exception {
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(new QuizNugget());
-
+        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(new QuizNugget());
         String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
 
         try {
@@ -234,22 +223,14 @@ public class AdminQuizControllerTest {
                     .content(incorrectAnswerString))
                     .andExpect(status().isNotFound());
         } catch (Exception e) { }
+
+        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
     public void testDeleteIncorrectAnswerOK() throws Exception {
-        testQuiz = quizRepository.save(testQuiz);
-
-        QuizNugget qn = new QuizNugget();
-        qn.setCorrectAnswer("Answer");
-        qn.setQuestion("Question");
-        qn.setQuiz(testQuiz);
-        qn = quizNuggetRepository.save(qn);
-
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(qn);
-        ia = incorrectAnswerRepository.save(ia);
+        QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        IncorrectAnswers ia = incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswer(qn));
 
         try {
             mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isOk());
@@ -258,17 +239,8 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testDeleteIncorrectAnswerNotFound() throws Exception {
-        testQuiz = quizRepository.save(testQuiz);
-
-        QuizNugget qn = new QuizNugget();
-        qn.setCorrectAnswer("Answer");
-        qn.setQuestion("Question");
-        qn.setQuiz(testQuiz);
-        qn = quizNuggetRepository.save(qn);
-
-        IncorrectAnswers ia = new IncorrectAnswers();
-        ia.setIncorrectAnswer("Incorrect");
-        ia.setQuizNugget(qn);
+        QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
+        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(qn);
 
         try {
             mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isNotFound());

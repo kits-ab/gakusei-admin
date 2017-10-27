@@ -89,7 +89,7 @@ public class AdminQuizController {
         if (!this.quizRepository.exists(quizId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        quizRepository.delete(quizId);
+        adminQuizHandler.handleDeleteQuiz(quizId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -160,10 +160,10 @@ public class AdminQuizController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity<String> deleteQuizNugget(@PathVariable(value="quizNuggetId") Long quizNuggetId) {
-        if (!this.quizNuggetRepository.exists(quizNuggetId)) {
+        if (!quizNuggetRepository.exists(quizNuggetId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        quizNuggetRepository.delete(quizNuggetId);
+        adminQuizHandler.handleDeleteQuizNugget(quizNuggetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

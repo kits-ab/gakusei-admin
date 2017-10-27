@@ -1,5 +1,6 @@
 package se.kits.gakusei.gakuseiadmin.tools;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
@@ -10,6 +11,8 @@ import se.kits.gakusei.util.QuizHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class AdminTestTools {
 
@@ -88,13 +91,28 @@ public class AdminTestTools {
         return wordType;
     }
 
-    public static HashMap<String, Object> createQuestion(Quiz quiz, int nbrOfIncorrectAnswers) {
+    public static Quiz generateQuiz(String title) {
+        return createQuiz(title, "");
+    }
+
+    private static Quiz createQuiz(String title, String suffix) {
+        Quiz quiz = new Quiz();
+        quiz.setName(title);
+        quiz.setDescription("Test description");
+        return quiz;
+    }
+
+    private static HashMap<String, Object> createQuestion(Quiz quiz, int nbrOfIncorrectAnswers) {
         HashMap<String, Object> question = new HashMap<>();
         question.put(QuizHandler.QN_QUESTION, "question");
         question.put(QuizHandler.QN_CORRECT_ANSWER, "correct");
         question.put(QuizHandler.QN_QUIZ_REF, quiz.getId());
         question.put(QuizHandler.QN_INCORRECT_ANSWERS, createIncorrectAnswers(nbrOfIncorrectAnswers));
         return question;
+    }
+
+    public static QuizNugget generateQuizNugget(Quiz quiz) {
+        return createQuizNugget(quiz, "");
     }
 
     private static QuizNugget createQuizNugget(Quiz quiz, String suffix) {
@@ -113,6 +131,43 @@ public class AdminTestTools {
             incorrectAnswers.add(incorrectAnswer);
         }
         return incorrectAnswers;
+    }
+
+    public static String generateQuestionString(Quiz quiz, int nbrOfIncorrectAnswers) throws Exception{
+        List<HashMap<String, Object>> questions = new ArrayList<>();
+        questions.add(createQuestion(quiz, nbrOfIncorrectAnswers));
+        return new ObjectMapper().writeValueAsString(questions);
+    }
+
+    public static IncorrectAnswers generateIncorrectAnswer(QuizNugget quizNugget) {
+        return createIncorrectAnswer(quizNugget, "");
+    }
+
+    public static List<IncorrectAnswers> generateIncorrectAnswers(QuizNugget quizNugget, int nbrOfIncorrectAnswers) {
+        List<IncorrectAnswers> incorrectAnswers = new ArrayList<>();
+         for (int i = 1; i <= nbrOfIncorrectAnswers; i++) {
+            incorrectAnswers.add(createIncorrectAnswer(quizNugget, Integer.toString(i)));
+        }
+        return incorrectAnswers;
+    }
+
+    private static IncorrectAnswers createIncorrectAnswer(QuizNugget quizNugget, String suffix) {
+        IncorrectAnswers answer = new IncorrectAnswers();
+        answer.setIncorrectAnswer("incorrect " + suffix);
+        answer.setQuizNugget(quizNugget);
+        return answer;
+    }
+
+    public static List<QuizNugget> generateQuizNuggets(Quiz quiz, int nbrOfNuggets) {
+        List<QuizNugget> quizNuggets = new ArrayList<>();
+        for (int i = 1; i <= nbrOfNuggets; i++) {
+            quizNuggets.add(createQuizNugget(quiz, Integer.toString(i)));
+        }
+        return quizNuggets;
+    }
+
+    public static List<QuizNugget> iterableToQuizNuggetList(Iterable<QuizNugget> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
     }
 
     public static void tearDownQuiz(QuizRepository qr, QuizNuggetRepository qnr, IncorrectAnswerRepository iar) {

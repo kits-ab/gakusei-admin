@@ -9,6 +9,7 @@ import se.kits.gakusei.util.QuizHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class AdminQuizHandler extends QuizHandler {
@@ -69,9 +70,9 @@ public class AdminQuizHandler extends QuizHandler {
                 errors.put(err_key, exc.getErrMap());
             }
             if (!errors.containsKey(err_key) && onUpdate) {
-                if (!this.incorrectAnswerRepository.existsByIdAndQuizNuggetId(
-                        new Long((int) myIncorrectAnswer_map.get(this.QN_ID)), quizNuggetId))
+                if (!incorrectAnswerRepository.exists(new Long((int) myIncorrectAnswer_map.get(this.QN_ID)))) {
                     errors.put(err_key, "Does not exist");
+                }
             }
             i++;
         }
@@ -131,5 +132,18 @@ public class AdminQuizHandler extends QuizHandler {
         incorrectAnswer.setIncorrectAnswer((String) myIncorrectAnswer.get(this.IA_INCORRECT_ANSWERS));
 
         this.incorrectAnswerRepository.save(incorrectAnswer);
+    }
+
+    public void handleDeleteQuiz(Long quizId) {
+        List<Long> quizNuggetIds = quizNuggetRepository.findByQuizId(quizId).stream().map(quizNugget -> quizNugget
+                .getId()).collect(Collectors.toList());
+        incorrectAnswerRepository.deleteByQuizNuggetIdIn(quizNuggetIds);
+        quizNuggetRepository.deleteByQuizId(quizId);
+        quizRepository.delete(quizId);
+    }
+
+    public void handleDeleteQuizNugget(Long quizNuggetId) {
+        incorrectAnswerRepository.deleteByQuizNuggetId(quizNuggetId);
+        quizNuggetRepository.delete(quizNuggetId);
     }
 }
