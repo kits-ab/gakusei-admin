@@ -103,12 +103,9 @@ public class AdminQuizControllerTest {
                 Assert.assertEquals(true, exists);
             }
 
-        } catch (FileNotFoundException e){
-            e.printStackTrace();
         } catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
     @Test
