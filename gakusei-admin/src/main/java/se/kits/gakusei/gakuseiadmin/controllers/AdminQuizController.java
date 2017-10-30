@@ -11,6 +11,7 @@ import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
+import se.kits.gakusei.gakuseiadmin.util.ParseResult;
 import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
 import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
@@ -39,76 +40,30 @@ public class AdminQuizController {
 
     @RequestMapping(
             value = "/api/quizes/csv",
-            method = RequestMethod.POST
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> importCsv(@RequestParam("quizName") String quizName,
+    public ResponseEntity<List<String>> importCsv(@RequestParam("quizName") String quizName,
                                             @RequestParam("quizDescription") String quizDescription,
                                             @RequestBody MultipartFile file) {
-        Quiz newQuiz = createNewQuiz(quizName, quizDescription);
+        ParseResult parseResult;
 
-        Map<String, List<String[]>> parseResult;
+        Quiz newQuiz = adminQuizHandler.createNewQuiz(quizName, quizDescription);
 
         try {
-            parseResult = CSV.parse(file.getInputStream(), 3);
+            parseResult = new ParseResult(CSV.parse(file.getInputStream(), 3), newQuiz);
         } catch (Exception e) {
-            return new ResponseEntity<>("Error reading file: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Collections.singletonList("Filen kunde inte läsas: " + e.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        List<String[]> rows = parseResult.get("ROWS");
-
-        ArrayList<QuizNugget> quizNuggets = new ArrayList<>();
-        ArrayList<Iterable<IncorrectAnswers>> incorrectAnswers = new ArrayList<>();
-
-        for(String[] row : rows) {
-            try {
-                String[] rowWithQuizInfo = appendQuizInfo(quizName, quizDescription, row);
-
-                CSVQuizNugget csvQuizNugget = new CSVQuizNugget(rowWithQuizInfo);
-                QuizNugget quizNugget = csvQuizNugget.getQuizNugget(newQuiz);
-                Iterable<IncorrectAnswers> incorrectAnswer = csvQuizNugget.getIncorrectAnswers(quizNugget);
-
-                quizNuggets.add(quizNugget);
-                incorrectAnswers.add(incorrectAnswer);
-            } catch (ParserFailureException pfe) {
-                return new ResponseEntity<String>("Error parsing row: " + pfe.getMessage(), HttpStatus.BAD_REQUEST);
-            }
+        if(parseResult.isSuccessful()){
+            adminQuizHandler.saveQuiz(newQuiz, parseResult.getParsedQuizNuggets(), parseResult.getParsedIncorrectAnswers());
+        } else {
+            return new ResponseEntity<>(parseResult.getErrors(), HttpStatus.BAD_REQUEST);
         }
 
-        saveQuiz(newQuiz, quizNuggets, incorrectAnswers);
+        return new ResponseEntity<>(Collections.singletonList("Fil uppladdad!"), HttpStatus.CREATED);
 
-        return new ResponseEntity<String>("File successfully uploaded", HttpStatus.CREATED);
-
-    }
-
-    private Quiz createNewQuiz(String name, String description){
-        Quiz toReturn = new Quiz();
-        toReturn.setName(name);
-        toReturn.setDescription(description);
-
-        return toReturn;
-    }
-
-    private String[] appendQuizInfo(String name, String description, String[] quizNuggetRow){
-        String[] appendedRow = new String[2+quizNuggetRow.length];
-
-        appendedRow[0] = name;
-        appendedRow[1] = description;
-
-        for(int i = 0; i < quizNuggetRow.length; i++){
-            appendedRow[i+2] = quizNuggetRow[i];
-        }
-
-        return appendedRow;
-    }
-
-    private void saveQuiz(Quiz quiz,
-                          ArrayList<QuizNugget> quizNuggets,
-                          ArrayList<Iterable<IncorrectAnswers>> incorrectAnswers){
-        quizRepository.save(quiz);
-        quizNuggetRepository.save(quizNuggets);
-        for(Iterable<IncorrectAnswers> ia : incorrectAnswers){
-            incorrectAnswerRepository.save(ia);
-        }
     }
 
     @RequestMapping(
