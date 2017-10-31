@@ -8,17 +8,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.IncorrectAnswers;
 import se.kits.gakusei.content.model.Quiz;
+import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
+import se.kits.gakusei.gakuseiadmin.util.ParseResult;
 import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
 import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 import se.kits.gakusei.content.repository.QuizRepository;
+import se.kits.gakusei.util.ParserFailureException;
+import se.kits.gakusei.util.csv.CSV;
+import se.kits.gakusei.util.csv.CSVQuizNugget;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 public class AdminQuizController {
@@ -40,31 +43,26 @@ public class AdminQuizController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> importCsv(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<List<String>> importCsv(@RequestParam("quizName") String quizName,
+                                            @RequestParam("quizDescription") String quizDescription,
+                                            @RequestBody MultipartFile file) {
+        ParseResult parseResult;
 
-        List<Quiz> quizList = new ArrayList<Quiz>();
-        Map<String, List<String[]>> result;
-        try{
-            result = CSVQuiz.parse(file);
-        } catch (Exception e){
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        for (String[] value: result.get("ROWS")) {
-            Quiz model = new Quiz();
-            model.setName(value[0]);
-            model.setDescription(value[1]);
-
-            quizList.add(model);
-        }
+        Quiz newQuiz = adminQuizHandler.createNewQuiz(quizName, quizDescription);
 
         try {
-            quizRepository.save(quizList);
-        } catch(Exception e) {
-            return new ResponseEntity<String>("Could not save to DB", HttpStatus.INTERNAL_SERVER_ERROR);
+            parseResult = new ParseResult(CSV.parse(file.getInputStream(), 3), newQuiz);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Collections.singletonList("Filen kunde inte läsas: " + e.getMessage()), HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<String>("File successfully uploaded", HttpStatus.CREATED);
+        if(parseResult.isSuccessful()){
+            adminQuizHandler.saveQuiz(newQuiz, parseResult.getParsedQuizNuggets(), parseResult.getParsedIncorrectAnswers());
+        } else {
+            return new ResponseEntity<>(parseResult.getErrors(), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(Collections.singletonList("Fil uppladdad!"), HttpStatus.CREATED);
 
     }
 

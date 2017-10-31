@@ -134,6 +134,24 @@ public class AdminQuizHandler extends QuizHandler {
         this.incorrectAnswerRepository.save(incorrectAnswer);
     }
 
+
+    public Quiz createNewQuiz(String name, String description){
+        Quiz toReturn = new Quiz();
+        toReturn.setName(name);
+        toReturn.setDescription(description);
+
+        return toReturn;
+    }
+
+    public void saveQuiz(Quiz quiz,
+                          ArrayList<QuizNugget> quizNuggets,
+                          ArrayList<Iterable<IncorrectAnswers>> incorrectAnswers){
+        quizRepository.save(quiz);
+        quizNuggetRepository.save(quizNuggets);
+        for(Iterable<IncorrectAnswers> ia : incorrectAnswers){
+            incorrectAnswerRepository.save(ia);
+        }
+
     public void handleDeleteQuiz(Long quizId) {
         List<Long> quizNuggetIds = quizNuggetRepository.findByQuizId(quizId).stream().map(quizNugget -> quizNugget
                 .getId()).collect(Collectors.toList());

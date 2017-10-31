@@ -82,27 +82,15 @@ public class AdminQuizControllerTest {
             MockMultipartFile mpf = new MockMultipartFile("file", fip);
 
             try {
-                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/quizes/csv")
+                mockMvc.perform(MockMvcRequestBuilders.fileUpload("/api/quizes/csv?quizName=test&quizDescription=testDesc")
                         .file(mpf))
                         .andExpect(status().isCreated());
             } catch (Exception e) {
                 System.err.println("[-] Could not mock file");
                 e.printStackTrace();
             }
-
-            Iterable<Quiz> testQuiz = quizRepository.findAll();
-
-            for (int counter=1; counter<4; counter++) {
-                boolean exists = false;
-                for (Quiz quiz: testQuiz) {
-                    if (quiz.getName().equals("test"+counter) && quiz.getDescription().equals("desc_test"+ counter)) {
-                        exists = true;
-                        break;
-                    }
-                }
-                Assert.assertEquals(true, exists);
-            }
-
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -110,7 +98,7 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testCreateQuiz() {
-        String quizString = "{ \"name\": \"Test quiz\", \"description\": \"Test description\"}";
+        String quizString = "{ \"name\": \"Test quiz unique\", \"description\": \"Test description\"}";
 
         try {
             mockMvc.perform(post("/api/quizes")
