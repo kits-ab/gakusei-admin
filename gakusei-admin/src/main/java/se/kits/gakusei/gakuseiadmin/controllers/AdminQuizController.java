@@ -72,7 +72,7 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Quiz> createQuiz(@RequestBody Quiz quiz) {
-        if (!quizRepository.findByName(quiz.getName()).isEmpty()) {
+        if (quizRepository.findByName(quiz.getName()) != null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -87,7 +87,7 @@ public class AdminQuizController {
         if (!this.quizRepository.exists(quizId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        quizRepository.delete(quizId);
+        adminQuizHandler.handleDeleteQuiz(quizId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -158,10 +158,10 @@ public class AdminQuizController {
             method = RequestMethod.DELETE
     )
     public ResponseEntity<String> deleteQuizNugget(@PathVariable(value="quizNuggetId") Long quizNuggetId) {
-        if (!this.quizNuggetRepository.exists(quizNuggetId)) {
+        if (!quizNuggetRepository.exists(quizNuggetId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        quizNuggetRepository.delete(quizNuggetId);
+        adminQuizHandler.handleDeleteQuizNugget(quizNuggetId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
