@@ -4,20 +4,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import se.kits.gakusei.content.model.Inflection;
 import se.kits.gakusei.content.model.Lesson;
+import se.kits.gakusei.content.model.Nugget;
+import se.kits.gakusei.content.repository.InflectionRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
+import se.kits.gakusei.content.repository.NuggetRepository;
+import se.sandboge.japanese.conjugation.Verb;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @RestController
 public class AdminGrammarController {
 
     @Autowired
     LessonRepository lessonRepository;
+
+    @Autowired
+    InflectionRepository inflectionRepository;
+
+    @Autowired
+    NuggetRepository nuggetRepository;
 
     @RequestMapping(
             value = "/api/grammar",
@@ -30,13 +42,71 @@ public class AdminGrammarController {
 
         for(Lesson lesson : lessonRepository.findVocabularyLessons()){
             HashMap<String, Object> grammarList = new HashMap<>();
-            grammarList.put("lesson", lesson.getName());
-            grammarList.put("inflections", Collections.EMPTY_LIST); // TODO : Add allowed methods of inflection
-            grammarList.put("nuggets", lessonRepository.findKanjiLessNuggetsByFactType(lesson.getName(), "reading", "swedish"));
+            HashMap<String, List<Inflection>> inflections = new HashMap<>();
+
+            List<Nugget> nuggets = nuggetRepository.getNuggetsWithWordType("verb", "english", "swedish");
+
+            inflections.put("used", inflectionRepository.findByLesson_Id(lesson.getId()));
+            inflections.put("unused", getUnusedInflectionMethods(lesson));
+
+            grammarList.put("lesson", lesson);
+            grammarList.put("inflections", inflections); // TODO : Add allowed methods of inflection
+            grammarList.put("nuggets", nuggets);
 
             grammarLists.add(grammarList);
         }
 
         return new ResponseEntity<>(grammarLists, HttpStatus.OK);
+    }
+
+    @RequestMapping(
+            value = "/api/grammar/inflection",
+            method = RequestMethod.PUT,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Inflection> createInflections(@RequestBody Inflection inflection){
+        if(inflectionRepository.findByLessonAndInflectionMethod(inflection.getLesson(), inflection.getInflectionMethod()) != null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            return new ResponseEntity<>(inflectionRepository.save(inflection), HttpStatus.CREATED);
+        }
+    }
+
+    @RequestMapping(
+            value = "/api/grammar/inflection",
+            method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<String> deleteInflections(@RequestBody Inflection inflection){
+        Inflection toDelete = inflectionRepository.findByLessonAndInflectionMethod(inflection.getLesson(), inflection.getInflectionMethod());
+        if(toDelete != null) {
+            inflectionRepository.delete(toDelete);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    private List<Inflection> getUnusedInflectionMethods(Lesson lesson) {
+        List<Inflection> unusedInflectionMethods = new ArrayList<>();
+        List<String> usedInflectionMethods = extractInflectionStrings(inflectionRepository.findByLesson_Id(lesson.getId()));
+        List<String> allInflectionMethods = Inflection.getAllInflectionMethods();
+
+        for(String inflectionMethod : allInflectionMethods){
+            if(!usedInflectionMethods.contains(inflectionMethod)){
+                Inflection inflection = new Inflection();
+                inflection.setInflectionMethod(inflectionMethod);
+                inflection.setLesson(lesson);
+
+                unusedInflectionMethods.add(inflection);
+            }
+        }
+
+        return unusedInflectionMethods;
+    }
+
+    private List<String> extractInflectionStrings(List<Inflection> inflections){
+        return inflections.stream().map(inflection -> inflection.getInflectionMethod()).collect(Collectors.toList());
     }
 }
