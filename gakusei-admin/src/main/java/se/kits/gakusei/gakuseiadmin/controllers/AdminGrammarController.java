@@ -11,6 +11,7 @@ import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.InflectionRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
+import se.kits.gakusei.gakuseiadmin.util.AdminGrammarHandler;
 import se.sandboge.japanese.conjugation.Verb;
 
 import java.lang.reflect.Method;
@@ -31,6 +32,9 @@ public class AdminGrammarController {
     @Autowired
     NuggetRepository nuggetRepository;
 
+    @Autowired
+    AdminGrammarHandler adminGrammarHandler;
+
     @RequestMapping(
             value = "/api/grammar",
             method = RequestMethod.GET,
@@ -47,7 +51,7 @@ public class AdminGrammarController {
             List<Nugget> nuggets = nuggetRepository.getNuggetsWithWordType("verb", "english", "swedish");
 
             inflections.put("used", inflectionRepository.findByLesson_Id(lesson.getId()));
-            inflections.put("unused", getUnusedInflectionMethods(lesson));
+            inflections.put("unused", adminGrammarHandler.getUnusedInflectionMethods(lesson));
 
             grammarList.put("lesson", lesson);
             grammarList.put("inflections", inflections); // TODO : Add allowed methods of inflection
@@ -88,25 +92,4 @@ public class AdminGrammarController {
         }
     }
 
-    private List<Inflection> getUnusedInflectionMethods(Lesson lesson) {
-        List<Inflection> unusedInflectionMethods = new ArrayList<>();
-        List<String> usedInflectionMethods = extractInflectionStrings(inflectionRepository.findByLesson_Id(lesson.getId()));
-        List<String> allInflectionMethods = Inflection.getAllInflectionMethods();
-
-        for(String inflectionMethod : allInflectionMethods){
-            if(!usedInflectionMethods.contains(inflectionMethod)){
-                Inflection inflection = new Inflection();
-                inflection.setInflectionMethod(inflectionMethod);
-                inflection.setLesson(lesson);
-
-                unusedInflectionMethods.add(inflection);
-            }
-        }
-
-        return unusedInflectionMethods;
-    }
-
-    private List<String> extractInflectionStrings(List<Inflection> inflections){
-        return inflections.stream().map(inflection -> inflection.getInflectionMethod()).collect(Collectors.toList());
-    }
 }
