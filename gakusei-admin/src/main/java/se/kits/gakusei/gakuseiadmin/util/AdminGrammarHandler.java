@@ -40,7 +40,7 @@ public class AdminGrammarHandler {
         HashMap<String, Object> grammarList = new HashMap<>();
         HashMap<String, List<Inflection>> inflections = new HashMap<>();
 
-        List<Nugget> nuggets = nuggetRepository.getNuggetsWithWordType("verb", "english", "swedish");
+        List<Nugget> nuggets = lessonRepository.findVerbNuggets(lesson.getId());
 
         inflections.put("used", inflectionRepository.findByLesson_Id(lesson.getId()));
         inflections.put("unused", getUnusedInflectionMethods(lesson));
