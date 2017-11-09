@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.content.model.Inflection;
+import se.kits.gakusei.content.model.Lesson;
 import se.kits.gakusei.content.repository.InflectionRepository;
 import se.kits.gakusei.gakuseiadmin.util.AdminGrammarHandler;
 
@@ -22,12 +23,12 @@ public class AdminGrammarController {
     AdminGrammarHandler adminGrammarHandler;
 
     @RequestMapping(
-            value = "/api/grammar",
+            value = "/api/grammar/{lessonId}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<HashMap<String, Object>>> getGrammarLists(){
-        return new ResponseEntity<>(adminGrammarHandler.createGrammarLists(), HttpStatus.OK);
+    public ResponseEntity<HashMap<String, Object>> getGrammarLists(@PathVariable(value = "lessonId") Long lessonId){
+        return new ResponseEntity<>(adminGrammarHandler.getGrammarList(lessonId), HttpStatus.OK);
     }
 
     @RequestMapping(

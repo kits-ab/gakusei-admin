@@ -30,17 +30,20 @@ public class AdminGrammarHandler {
         List<HashMap<String, Object>> grammarLists = new ArrayList<>();
 
         for(Lesson lesson : lessonRepository.findVocabularyLessons()){
-            grammarLists.add(getGrammarList(lesson));
+            grammarLists.add(getGrammarList(lesson.getId()));
         }
 
         return grammarLists;
     }
 
-    private HashMap<String, Object> getGrammarList(Lesson lesson) {
+    public HashMap<String, Object> getGrammarList(Long lessonId) {
+        Lesson lesson = lessonRepository.findOne(lessonId);
         HashMap<String, Object> grammarList = new HashMap<>();
         HashMap<String, List<Inflection>> inflections = new HashMap<>();
 
         List<Nugget> nuggets = lessonRepository.findVerbNuggets(lesson.getId());
+
+        lesson.setNuggets(null);
 
         inflections.put("used", inflectionRepository.findByLesson_Id(lesson.getId()));
         inflections.put("unused", getUnusedInflectionMethods(lesson));
