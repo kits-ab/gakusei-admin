@@ -56,7 +56,7 @@ public class FileUploadController {
                 }
             }
 
-            return new ResponseEntity<>(nuggets.size() + " nuggets were succesfully created!", HttpStatus.CREATED);
+            return new ResponseEntity<>(nuggets.size() + " nuggets were successfully created!", HttpStatus.CREATED);
         } catch (ParserFailureException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
