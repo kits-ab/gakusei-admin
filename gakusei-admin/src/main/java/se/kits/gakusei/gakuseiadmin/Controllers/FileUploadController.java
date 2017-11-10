@@ -39,6 +39,11 @@ public class FileUploadController {
 
         try {
             List<Nugget> nuggets = parser.parse();
+
+            for(Nugget n : nuggets){
+                n.setType("Test");
+            }
+
             nuggetRepository.save(nuggets);
 
             return new ResponseEntity<>(file.getName() + " was received!", HttpStatus.CREATED);
