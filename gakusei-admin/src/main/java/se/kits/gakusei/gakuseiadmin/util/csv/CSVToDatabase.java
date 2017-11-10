@@ -50,15 +50,25 @@ public class CSVToDatabase {
     }
 
     private List<Nugget> createNuggets(List<String[]> rows){
-
+        boolean failure = false;
+        StringBuilder stringBuilder = new StringBuilder();
         List<Nugget> nuggets = new ArrayList<>();
 
         for(String[] stringList : rows){
-            CSVNugget csvNugget = new CSVNugget(stringList, lessonRepository, bookRepository, adminWordTypeRepository);
-            nuggets.add(csvNugget.getNugget());
+            try {
+                CSVNugget csvNugget = new CSVNugget(stringList, lessonRepository, bookRepository, adminWordTypeRepository);
+                nuggets.add(csvNugget.getNugget());
+            } catch (ParserFailureException pfe) {
+                failure = true;
+                stringBuilder.append("\n").append(pfe.getMessage());
+            }
         }
 
-        return nuggets;
+        if(failure){
+            throw new ParserFailureException(stringBuilder.toString());
+        } else {
+            return nuggets;
+        }
     }
 
     private CsvParser setupParser(RowListProcessor rowProcessor){
