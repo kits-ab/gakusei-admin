@@ -151,6 +151,7 @@ public class AdminQuizHandler extends QuizHandler {
         for (Iterable<IncorrectAnswers> ia : incorrectAnswers) {
             incorrectAnswerRepository.save(ia);
         }
+    }
 
     }
 
