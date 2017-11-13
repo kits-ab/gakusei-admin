@@ -74,7 +74,7 @@ public class AdminGrammarHandler {
     }
 
     private List<String> extractInflectionStrings(List<Inflection> inflections){
-        return inflections.stream().map(inflection -> inflection.getInflectionMethod()).collect(Collectors.toList());
+        return inflections.stream().map(Inflection::getInflectionMethod).collect(Collectors.toList());
     }
 
 }
