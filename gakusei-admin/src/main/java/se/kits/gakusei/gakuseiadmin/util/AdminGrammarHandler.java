@@ -45,7 +45,7 @@ public class AdminGrammarHandler {
 
         lesson.setNuggets(null);
 
-        inflections.put("used", inflectionRepository.findByLesson_Id(lesson.getId()));
+        inflections.put("used", inflectionRepository.findByLessonId(lesson.getId()));
         inflections.put("unused", getUnusedInflectionMethods(lesson));
 
         grammarList.put("lesson", lesson);
@@ -57,7 +57,7 @@ public class AdminGrammarHandler {
 
     public List<Inflection> getUnusedInflectionMethods(Lesson lesson) {
         List<Inflection> unusedInflectionMethods = new ArrayList<>();
-        List<String> usedInflectionMethods = extractInflectionStrings(inflectionRepository.findByLesson_Id(lesson.getId()));
+        List<String> usedInflectionMethods = extractInflectionStrings(inflectionRepository.findByLessonId(lesson.getId()));
         List<String> allInflectionMethods = Inflection.getAllInflectionMethods();
 
         for(String inflectionMethod : allInflectionMethods){
