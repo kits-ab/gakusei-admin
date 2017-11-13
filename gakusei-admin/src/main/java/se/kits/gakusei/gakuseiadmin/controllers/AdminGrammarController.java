@@ -37,7 +37,7 @@ public class AdminGrammarController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Inflection> createInflections(@RequestBody Inflection inflection){
+    public ResponseEntity<Inflection> createInflection(@RequestBody Inflection inflection){
         if(inflectionRepository.findByLessonAndInflectionMethod(inflection.getLesson(), inflection.getInflectionMethod()) != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } else {
@@ -50,7 +50,7 @@ public class AdminGrammarController {
             method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> deleteInflections(@RequestBody Inflection inflection){
+    public ResponseEntity<String> deleteInflection(@RequestBody Inflection inflection){
         Inflection toDelete = inflectionRepository.findByLessonAndInflectionMethod(inflection.getLesson(), inflection.getInflectionMethod());
         if(toDelete != null) {
             inflectionRepository.delete(toDelete);
