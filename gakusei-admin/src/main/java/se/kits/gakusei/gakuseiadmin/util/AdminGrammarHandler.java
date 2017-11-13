@@ -43,6 +43,8 @@ public class AdminGrammarHandler {
 
         List<Nugget> nuggets = lessonRepository.findVerbNuggets(lesson.getId());
 
+        // Set this to null as all relevant nuggets are already sent separately
+        // and sending duplicates will ake the JSON decoder strip the object of content
         lesson.setNuggets(null);
 
         inflections.put("used", inflectionRepository.findByLessonId(lesson.getId()));
