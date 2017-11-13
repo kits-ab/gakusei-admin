@@ -40,27 +40,30 @@ public class FileUploadController {
 
         try {
             List<Nugget> nuggets = parser.parse();
-
+            
             for(Nugget n : nuggets){
                 n.setType("Test");
             }
 
             Iterable<Nugget> savedNuggets = nuggetRepository.save(nuggets);
-
-            for(Nugget n : savedNuggets){
-                for(Lesson l : n.getLessons()){
-                    List<Nugget> newNuggetList = l.getNuggets();
-                    newNuggetList.add(n);
-                    l.setNuggets(newNuggetList);
-                    lessonRepository.save(l);
-                }
-            }
+            updateLesson(savedNuggets);
 
             return new ResponseEntity<>(nuggets.size() + " nuggets were successfully created!", HttpStatus.CREATED);
         } catch (ParserFailureException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    private void updateLesson(Iterable<Nugget> nuggets){
+        for(Nugget n : nuggets){
+            for(Lesson l : n.getLessons()){
+                List<Nugget> newNuggetList = l.getNuggets();
+                newNuggetList.add(n);
+                l.setNuggets(newNuggetList);
+                lessonRepository.save(l);
+            }
+        }
     }
 
 }
