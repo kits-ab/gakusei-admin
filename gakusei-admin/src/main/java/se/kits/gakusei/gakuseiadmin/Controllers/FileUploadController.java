@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import se.kits.gakusei.content.model.Lesson;
 import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
@@ -39,13 +40,31 @@ public class FileUploadController {
 
         try {
             List<Nugget> nuggets = parser.parse();
-            nuggetRepository.save(nuggets);
 
-            return new ResponseEntity<>(file.getName() + " was received!", HttpStatus.CREATED);
+            // Set types temporarily as it wil be removed when migrating
+            for(Nugget n : nuggets){
+                n.setType("Test");
+            }
+
+            Iterable<Nugget> savedNuggets = nuggetRepository.save(nuggets);
+            updateLesson(savedNuggets);
+
+            return new ResponseEntity<>(nuggets.size() + " nuggets were successfully created!", HttpStatus.CREATED);
         } catch (ParserFailureException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    private void updateLesson(Iterable<Nugget> nuggets){
+        for(Nugget n : nuggets){
+            for(Lesson l : n.getLessons()){
+                List<Nugget> newNuggetList = l.getNuggets();
+                newNuggetList.add(n);
+                l.setNuggets(newNuggetList);
+                lessonRepository.save(l);
+            }
+        }
     }
 
 }
