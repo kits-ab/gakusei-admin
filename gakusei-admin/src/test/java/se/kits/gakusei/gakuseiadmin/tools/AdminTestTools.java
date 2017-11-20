@@ -1,5 +1,6 @@
 package se.kits.gakusei.gakuseiadmin.tools;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
@@ -174,5 +175,27 @@ public class AdminTestTools {
         iar.deleteAll();
         qnr.deleteAll();
         qr.deleteAll();
+    }
+
+    public static String generateNuggetString(Nugget nugget) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(nugget);
+    }
+
+    public static Nugget generateNugget(WordType wordType, List<Book> books) {
+        return createNugget(wordType, books,"");
+    }
+
+    private static Nugget createNugget(WordType wordType, List<Book> books, String suffix) {
+        Nugget nugget = new Nugget();
+        nugget.setId("testId" + suffix);
+        nugget.setDescription("description" + suffix);
+        nugget.setEnglish("english" + suffix);
+        nugget.setSwedish("swedish" + suffix);
+        nugget.setJpRead("jpRead" + suffix);
+        nugget.setJpWrite("jpWrite" + suffix);
+        nugget.setType(wordType.getType());
+        nugget.setWordType(wordType);
+        nugget.setBooks(books);
+        return nugget;
     }
 }
