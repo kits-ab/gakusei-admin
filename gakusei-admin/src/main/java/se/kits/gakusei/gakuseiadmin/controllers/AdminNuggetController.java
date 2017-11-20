@@ -1,6 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +34,12 @@ public class AdminNuggetController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<?> createNugget(@RequestBody Nugget nugget) {
-        if (nuggetRepository.exists(nugget.getId())) {
-            return new ResponseEntity<String>("Nugget with id " + nugget.getId() + " already exists",
-                    HttpStatus.BAD_REQUEST);
+    public ResponseEntity createNugget(@RequestBody Nugget nugget) {
+        try {
+            return new ResponseEntity<Nugget>(nuggetRepository.save(nugget), HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<String>("Nugget already exists", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<Nugget>(nuggetRepository.save(nugget), HttpStatus.CREATED);
     }
 
     @RequestMapping(
