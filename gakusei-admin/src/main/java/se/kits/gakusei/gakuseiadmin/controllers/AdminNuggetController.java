@@ -1,6 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,8 +28,6 @@ public class AdminNuggetController {
     @Autowired
     private BookRepository bookRepository;
 
-    private static final int PAGE_SIZE = 10;
-
     @RequestMapping(
             value = "/api/nuggets",
             method = RequestMethod.POST,
@@ -47,9 +46,10 @@ public class AdminNuggetController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<Nugget>> getNuggetPage(@PathVariable(value = "offset") int offset) {
-        Pageable pageRequest = new PageRequest(offset, PAGE_SIZE);
-        return new ResponseEntity<>(adminNuggetRepository.findAll(pageRequest).getContent(), HttpStatus.OK);
+    public ResponseEntity<Page<Nugget>> getNuggetPage(@PathVariable(value = "offset") int offset,
+                                                      @RequestParam(value = "pageSize") int pageSize) {
+        Pageable pageRequest = new PageRequest(offset, pageSize);
+        return new ResponseEntity<>(adminNuggetRepository.findAll(pageRequest), HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -57,13 +57,13 @@ public class AdminNuggetController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<Nugget>> getNuggetPageFilterBySwedishAndWordTypeAndBooks(
+    public ResponseEntity<Page<Nugget>> getNuggetPageFilterBySwedishAndWordTypeAndBooks(
             @PathVariable(value = "offset") int offset,
+            @RequestParam(value = "pageSize") int pageSize,
             @RequestParam(value = "swedish") String swedish,
             @RequestParam(value = "wordTypeId", required = false) Long wordTypeId,
             @RequestParam(value = "bookIds", required = false) List<Long> bookIds) {
-
-        Pageable pageRequest = new PageRequest(offset, PAGE_SIZE);
+        Pageable pageRequest = new PageRequest(offset, pageSize);
         Iterable<Book> books = bookRepository.findAll(bookIds);
 
         if (wordTypeId == null && bookIds == null) {

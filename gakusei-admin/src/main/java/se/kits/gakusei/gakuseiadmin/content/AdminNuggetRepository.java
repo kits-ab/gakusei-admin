@@ -12,12 +12,13 @@ public interface AdminNuggetRepository extends CrudRepository<Nugget, Long> {
 
     Page<Nugget> findAll(Pageable pageRequest);
 
-    List<Nugget> findBySwedishContainingIgnoreCase(String swedish, Pageable pageRequest);
+    Page<Nugget> findBySwedishContainingIgnoreCase(String swedish, Pageable pageRequest);
 
-    List<Nugget> findBySwedishContainingIgnoreCaseAndWordTypeId(String swedish, Long id, Pageable pageRequest);
+    Page<Nugget> findBySwedishContainingIgnoreCaseAndWordTypeId(String swedish, Long id, Pageable pageRequest);
 
-    List<Nugget> findBySwedishContainingIgnoreCaseAndBooksIn(String swedish, Iterable<Book> books, Pageable pageRequest);
+    Page<Nugget> findBySwedishContainingIgnoreCaseAndBooksIn(String swedish, Iterable<Book> books, Pageable
+            pageRequest);
 
-    List<Nugget> findBySwedishContainingIgnoreCaseAndWordTypeIdAndBooksIn(String swedish, Long id,
+    Page<Nugget> findBySwedishContainingIgnoreCaseAndWordTypeIdAndBooksIn(String swedish, Long id,
                                                                           Iterable<Book> books, Pageable pageRequest);
 }

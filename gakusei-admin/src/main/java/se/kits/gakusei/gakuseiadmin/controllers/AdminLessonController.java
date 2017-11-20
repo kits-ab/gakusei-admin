@@ -1,13 +1,16 @@
 package se.kits.gakusei.gakuseiadmin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.content.model.Lesson;
 import se.kits.gakusei.content.repository.LessonRepository;
+import se.kits.gakusei.gakuseiadmin.content.AdminLessonRepository;
 
 @RestController
 public class AdminLessonController {
@@ -15,15 +18,19 @@ public class AdminLessonController {
     @Autowired
     private LessonRepository lessonRepository;
 
+    @Autowired
+    AdminLessonRepository adminLessonRepository;
+
     @RequestMapping(
-            value = "/api/lessons/all",
+            value = "/api/lessons/page/{offset}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    @Cacheable("allLessons")
-    public ResponseEntity<Iterable<Lesson>> getLessons() {
+    public ResponseEntity<Page<Lesson>> getLessons(@PathVariable(value = "offset") int offset,
+                                                   @RequestParam(value = "pageSize") int pageSize) {
+        return new ResponseEntity<>(adminLessonRepository.findAll(new PageRequest(offset, pageSize)), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(lessonRepository.findAll(), HttpStatus.OK);
     }
 
     @RequestMapping(
