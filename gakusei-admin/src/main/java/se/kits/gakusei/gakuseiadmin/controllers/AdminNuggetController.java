@@ -91,7 +91,7 @@ public class AdminNuggetController {
             method = RequestMethod.DELETE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> createNugget(@PathVariable String id) {
+    public ResponseEntity<String> deleteNugget(@PathVariable String id) {
         if (nuggetRepository.exists(id)) {
             nuggetRepository.delete(id);
             return new ResponseEntity<String>(HttpStatus.OK);
