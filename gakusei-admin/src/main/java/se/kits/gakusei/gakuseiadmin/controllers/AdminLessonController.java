@@ -31,6 +31,17 @@ public class AdminLessonController {
         return new ResponseEntity<>(adminLessonRepository.findAll(new PageRequest(offset, pageSize)), HttpStatus.OK);
     }
 
+    @RequestMapping(
+            value = "/api/lessons/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Lesson> getLesson(@PathVariable(value = "id") Long id) {
+        Lesson lesson = lessonRepository.findOne(id);
+        if (lesson != null) {
+            return new ResponseEntity<>(lesson, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @RequestMapping(
