@@ -84,7 +84,7 @@ public class AdminNuggetControllerTest {
                 .content(nuggetString))
                 .andExpect(status().isCreated());
 
-        Assert.assertTrue(adminNuggetRepository.count() > 0);
+        Assert.assertTrue(adminNuggetRepository.count() == 1);
     }
 
     @Test
