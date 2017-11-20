@@ -198,4 +198,20 @@ public class AdminTestTools {
         nugget.setBooks(books);
         return nugget;
     }
+
+    public static Lesson generateLesson(String name, List<Nugget> nuggets) {
+        return createLesson(name, nuggets, "");
+    }
+
+    public static String generateLessonString(Lesson lesson) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(lesson);
+    }
+
+    private static Lesson createLesson(String name, List<Nugget> nuggets, String suffix) {
+        Lesson lesson = new Lesson();
+        lesson.setName(name + suffix);
+        lesson.setDescription("description" + suffix);
+        lesson.setNuggets(nuggets);
+        return lesson;
+    }
 }
