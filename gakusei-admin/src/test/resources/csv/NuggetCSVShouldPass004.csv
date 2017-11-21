@@ -1,0 +1,11 @@
+##################################
+# This file tests several book titles
+##################################
+
+# Header row
+
+description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
+
+# Body rows
+
+"Test nugget","Test title, Test title","Test type","Test lesson","svenska","english","Japanese reading","Japanese writing",false

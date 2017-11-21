@@ -82,6 +82,11 @@ public class FileUploadControllerTest {
     }
 
     @Test
+    public void testNuggetWithSeveralBooks() {
+        runPassingTest("004");
+    }
+
+    @Test
     public void testBasicFailingCSVNugget(){
         runFailingTest("001");
     }

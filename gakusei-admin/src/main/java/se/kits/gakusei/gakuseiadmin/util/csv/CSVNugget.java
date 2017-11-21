@@ -12,6 +12,7 @@ import se.kits.gakusei.util.ParserFailureException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CSVNugget {
 
@@ -60,7 +61,7 @@ public class CSVNugget {
         nugget.setWordType(createWordType(values[TYPE_INDEX]));
         nugget.setHidden(createBoolean(values[HIDDEN_INDEX]));
         nugget.setLessons(createLessonList(values[LESSONS_INDEX]));
-        nugget.setTitle(createBookTitle(values[TITLE_INDEX]));
+        nugget.setBooks(createBookList(values[TITLE_INDEX]));
 
         return nugget;
     }
@@ -100,13 +101,19 @@ public class CSVNugget {
         return lessons;
     }
 
-    private Book createBookTitle(String s){
-        Book book = bookRepository.findByTitle(s);
-        if(book != null) {
+    private List<Book> createBookList(String s){
+        String[] listOfTitles = s.split(",");
+        return Arrays.stream(listOfTitles)
+                .map(title -> getBook(title.trim())).collect(Collectors.toList());
+    }
+
+    private Book getBook(String title) {
+        Book book = bookRepository.findByTitle(title);
+        if (book != null) {
             return book;
-        } else {
-            throw new ParserFailureException("Invalid book \"" + s + "\" in row: " + Arrays.toString(values)
-                                            + "\nBook does not exist in database");
         }
+
+        throw new ParserFailureException("Invalid book \"" + title + "\" in row: " + Arrays.toString(values)
+                    + "\nBook does not exist in database");
     }
 }
