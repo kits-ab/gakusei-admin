@@ -35,11 +35,7 @@ public class AdminNuggetController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity createNugget(@RequestBody Nugget nugget) {
-        try {
-            return new ResponseEntity<Nugget>(nuggetRepository.save(nugget), HttpStatus.CREATED);
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseEntity<String>("Nugget already exists", HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<Nugget>(nuggetRepository.save(nugget), HttpStatus.CREATED);
     }
 
     @RequestMapping(

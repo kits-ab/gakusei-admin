@@ -88,20 +88,6 @@ public class AdminNuggetControllerTest {
     }
 
     @Test
-    public void testCreateNuggetBadRequest() throws Exception {
-        adminNuggetRepository.save(nugget);
-        nugget.setId("testId2");
-        String nuggetString = AdminTestTools.generateNuggetString(nugget);
-
-        mockMvc.perform(post("/api/nuggets")
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .content(nuggetString))
-                .andExpect(status().isBadRequest());
-
-        Assert.assertTrue(adminNuggetRepository.count() == 1);
-    }
-
-    @Test
     public void testDeleteNuggetOk() throws Exception {
         Nugget savedNugget = adminNuggetRepository.save(nugget);
 
