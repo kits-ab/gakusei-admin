@@ -1,7 +1,7 @@
 # Header row
 
-Id,description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
+description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
 
 # Body row
 
-1,"Too","Few","Entries"
+"Too","Few","Entries"
