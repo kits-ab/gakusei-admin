@@ -4,8 +4,8 @@
 
 # Header row
 
-Id,description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
+description,title,type,lessons,swedish,english,jpRead,jpWrite,hidden
 
 # Body rows
 
-1,"Test nugget","Test title","Test type","Test lesson, Test lesson, Test lesson","svenska","english","Japanese reading","Japanese writing",false
+"Test nugget","Test title","Test type","Test lesson, Test lesson, Test lesson","svenska","english","Japanese reading","Japanese writing",false

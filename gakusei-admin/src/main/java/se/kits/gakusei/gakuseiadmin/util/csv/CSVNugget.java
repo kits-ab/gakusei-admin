@@ -21,18 +21,17 @@ public class CSVNugget {
 
     private String[] values;
 
-    private final int ID_INDEX = 0;
-    private final int DESCRIPTION_INDEX = 1;
-    private final int TITLE_INDEX = 2;
-    private final int TYPE_INDEX = 3;
-    private final int LESSONS_INDEX = 4;
-    private final int SWEDISH_INDEX = 5;
-    private final int ENGLISH_INDEX = 6;
-    private final int JP_READ_INDEX = 7;
-    private final int JP_WRITE_INDEX = 8;
-    private final int HIDDEN_INDEX = 9;
+    private final int DESCRIPTION_INDEX = 0;
+    private final int TITLE_INDEX = 1;
+    private final int TYPE_INDEX = 2;
+    private final int LESSONS_INDEX = 3;
+    private final int SWEDISH_INDEX = 4;
+    private final int ENGLISH_INDEX = 5;
+    private final int JP_READ_INDEX = 6;
+    private final int JP_WRITE_INDEX = 7;
+    private final int HIDDEN_INDEX = 8;
 
-    private final int EXPECTED_NUMBER_OF_VALUES = 10;
+    private final int EXPECTED_NUMBER_OF_VALUES = 9;
 
     public CSVNugget(String[] values, LessonRepository lr, BookRepository br, AdminWordTypeRepository wtr){
         this.values = values;
@@ -53,7 +52,6 @@ public class CSVNugget {
 
         Nugget nugget = new Nugget();
 
-        nugget.setId(values[ID_INDEX]);
         nugget.setDescription(values[DESCRIPTION_INDEX]);
         nugget.setEnglish(values[ENGLISH_INDEX]);
         nugget.setSwedish(values[SWEDISH_INDEX]);
