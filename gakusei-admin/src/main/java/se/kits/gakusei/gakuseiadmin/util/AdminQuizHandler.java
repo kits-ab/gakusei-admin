@@ -153,8 +153,6 @@ public class AdminQuizHandler extends QuizHandler {
         }
     }
 
-    }
-
     public void handleDeleteQuiz(Long quizId) {
         List<Long> quizNuggetIds = quizNuggetRepository.findByQuizId(quizId).stream().map(QuizNugget::getId).collect
                 (Collectors.toList());
