@@ -34,8 +34,9 @@ public class CSVParseTest {
             Map<String, List<String[]>> result = CSV.parse(mpf);
 
             for (String[] value: result.get("HEADERS")) {
-                Assert.assertEquals("name", value[0]);
-                Assert.assertEquals("description", value[1]);
+                Assert.assertEquals("Question", value[0]);
+                Assert.assertEquals("Correct answer", value[1]);
+                Assert.assertEquals("incorrect answers", value[2]);
             }
 
             int rowCounter = 1;
