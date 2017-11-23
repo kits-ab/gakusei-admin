@@ -187,7 +187,6 @@ public class AdminTestTools {
 
     private static Nugget createNugget(WordType wordType, List<Book> books, String suffix) {
         Nugget nugget = new Nugget();
-        nugget.setId("testId" + suffix);
         nugget.setDescription("description" + suffix);
         nugget.setEnglish("english" + suffix);
         nugget.setSwedish("swedish" + suffix);
