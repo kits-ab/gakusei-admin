@@ -154,6 +154,16 @@ public class AdminQuizController {
     }
 
     @RequestMapping(
+            value = "/api/quizes/{quizId}/nuggets",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<List<HashMap<String, Object>>> getQuizNuggets(@PathVariable(value="quizId") Long quizId) {
+        List<HashMap<String, Object>> quizNuggets = adminQuizHandler.getQuizNuggets(quizId);
+        return new ResponseEntity<>(quizNuggets, HttpStatus.OK);
+    }
+
+    @RequestMapping(
             value = "/api/quizes/nuggets/{quizNuggetId}",
             method = RequestMethod.DELETE
     )
