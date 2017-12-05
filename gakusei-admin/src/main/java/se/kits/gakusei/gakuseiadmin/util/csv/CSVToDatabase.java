@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
-import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.content.repository.WordTypeRepository;
 import se.kits.gakusei.util.ParserFailureException;
 
 import java.io.IOException;
@@ -20,15 +20,15 @@ public class CSVToDatabase {
 
     private BookRepository bookRepository;
 
-    private AdminWordTypeRepository adminWordTypeRepository;
+    private WordTypeRepository wordTypeRepository;
 
     private MultipartFile file;
 
-    public CSVToDatabase(MultipartFile f, LessonRepository lr, AdminWordTypeRepository wr, BookRepository br){
+    public CSVToDatabase(MultipartFile f, LessonRepository lr, WordTypeRepository wr, BookRepository br){
         file = f;
         lessonRepository = lr;
         bookRepository = br;
-        adminWordTypeRepository = wr;
+        wordTypeRepository = wr;
     }
 
     public List<Nugget> parse(){
@@ -56,7 +56,7 @@ public class CSVToDatabase {
 
         for(String[] stringList : rows){
             try {
-                CSVNugget csvNugget = new CSVNugget(stringList, lessonRepository, bookRepository, adminWordTypeRepository);
+                CSVNugget csvNugget = new CSVNugget(stringList, lessonRepository, bookRepository, wordTypeRepository);
                 nuggets.add(csvNugget.getNugget());
             } catch (ParserFailureException pfe) {
                 failure = true;

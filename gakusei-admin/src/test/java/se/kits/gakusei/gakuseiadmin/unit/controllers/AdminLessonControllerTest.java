@@ -19,7 +19,7 @@ import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminLessonRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminNuggetRepository;
-import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.content.repository.WordTypeRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class AdminLessonControllerTest {
     private BookRepository bookRepository;
 
     @Autowired
-    private AdminWordTypeRepository wordTypeRepository;
+    private WordTypeRepository wordTypeRepository;
 
     @Autowired
     private AdminNuggetRepository nuggetRepository;

@@ -16,8 +16,8 @@ import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
+import se.kits.gakusei.content.repository.WordTypeRepository;
 import se.kits.gakusei.gakuseiadmin.content.AdminNuggetRepository;
-import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class AdminNuggetControllerTest {
     private BookRepository bookRepository;
 
     @Autowired
-    private AdminWordTypeRepository wordTypeRepository;
+    private WordTypeRepository wordTypeRepository;
 
     private MockMvc mockMvc;
 

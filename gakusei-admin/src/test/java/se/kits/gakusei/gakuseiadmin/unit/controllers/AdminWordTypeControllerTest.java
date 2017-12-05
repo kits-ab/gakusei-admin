@@ -10,7 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import se.kits.gakusei.content.model.WordType;
-import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.content.repository.WordTypeRepository;
 import se.kits.gakusei.gakuseiadmin.controllers.AdminWordTypeController;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 
@@ -27,7 +27,7 @@ public class AdminWordTypeControllerTest {
     private AdminWordTypeController adminWordTypeController;
 
     @Mock
-    private AdminWordTypeRepository adminWordTypeRepository;
+    private WordTypeRepository wordTypeRepository;
 
     private String type;
     private String newType;
@@ -53,7 +53,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testGetWordTypeOK() {
-        when(adminWordTypeRepository.findOne(wordType.getId())).thenReturn(wordType);
+        when(wordTypeRepository.findOne(wordType.getId())).thenReturn(wordType);
 
         ResponseEntity<WordType> re = adminWordTypeController.getWordType(wordType.getId());
 
@@ -63,7 +63,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testGetWordTypesOK() {
-        when(adminWordTypeRepository.findAll()).thenReturn(wordTypes);
+        when(wordTypeRepository.findAll()).thenReturn(wordTypes);
 
         ResponseEntity<Iterable<WordType>> re = adminWordTypeController.getWordTypes();
 
@@ -74,7 +74,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testGetWordTypeNotFound() {
-        when(adminWordTypeRepository.findOne(wordType.getId())).thenReturn(null);
+        when(wordTypeRepository.findOne(wordType.getId())).thenReturn(null);
 
         ResponseEntity<WordType> re = adminWordTypeController.getWordType(wordType.getId());
 
@@ -84,8 +84,8 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testCreateWordTypeOK() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(null);
-        when(adminWordTypeRepository.save(any(WordType.class))).thenReturn(wordType);
+        when(wordTypeRepository.findByType(type)).thenReturn(null);
+        when(wordTypeRepository.save(any(WordType.class))).thenReturn(wordType);
 
         ResponseEntity<?> re = adminWordTypeController.createWordType(type);
 
@@ -96,7 +96,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testCreateWordTypeBadRequest() {
-        when(adminWordTypeRepository.findByType(type)).thenReturn(wordType);
+        when(wordTypeRepository.findByType(type)).thenReturn(wordType);
 
         ResponseEntity<?> re = adminWordTypeController.createWordType(type);
 
@@ -107,8 +107,8 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testUpdateWordTypeOK() {
-        when(adminWordTypeRepository.exists(updatedType.getId())).thenReturn(true);
-        when(adminWordTypeRepository.save(updatedType)).thenReturn(updatedType);
+        when(wordTypeRepository.exists(updatedType.getId())).thenReturn(true);
+        when(wordTypeRepository.save(updatedType)).thenReturn(updatedType);
 
         ResponseEntity<WordType> re = adminWordTypeController.updateWordType(updatedType);
 
@@ -119,7 +119,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testUpdateWordTypeNotFound() {
-        when(adminWordTypeRepository.exists(wordType.getId())).thenReturn(false);
+        when(wordTypeRepository.exists(wordType.getId())).thenReturn(false);
 
         ResponseEntity<WordType> re = adminWordTypeController.updateWordType(updatedType);
 
@@ -130,7 +130,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testDeleteTypeOK() {
-        when(adminWordTypeRepository.exists(wordType.getId())).thenReturn(true);
+        when(wordTypeRepository.exists(wordType.getId())).thenReturn(true);
 
         ResponseEntity<String> re = adminWordTypeController.deleteWordType(wordType.getId());
 
@@ -141,7 +141,7 @@ public class AdminWordTypeControllerTest {
 
     @Test
     public void testDeleteTypeNotFound() {
-        when(adminWordTypeRepository.exists(wordType.getId())).thenReturn(false);
+        when(wordTypeRepository.exists(wordType.getId())).thenReturn(false);
 
         ResponseEntity<String> re = adminWordTypeController.deleteWordType(wordType.getId());
 
