@@ -17,7 +17,7 @@ import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
 import se.kits.gakusei.content.repository.NuggetRepository;
-import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.content.repository.WordTypeRepository;
 import se.kits.gakusei.gakuseiadmin.controllers.FileUploadController;
 
 import java.io.File;
@@ -36,7 +36,7 @@ public class FileUploadControllerTest {
     LessonRepository lessonRepository;
 
     @Mock
-    AdminWordTypeRepository adminWordTypeRepository;
+    WordTypeRepository wordTypeRepository;
 
     @Mock
     BookRepository bookRepository;
@@ -61,7 +61,7 @@ public class FileUploadControllerTest {
         lesson = new Lesson();
         lesson.setName("Test lesson");
 
-        Mockito.when(adminWordTypeRepository.findByType("Test type")).thenReturn(wordType);
+        Mockito.when(wordTypeRepository.findByType("Test type")).thenReturn(wordType);
         Mockito.when(lessonRepository.findByName("Test lesson")).thenReturn(lesson);
         Mockito.when(bookRepository.findByTitle("Test title")).thenReturn(book);
     }

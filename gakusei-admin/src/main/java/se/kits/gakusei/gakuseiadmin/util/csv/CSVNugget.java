@@ -6,7 +6,7 @@ import se.kits.gakusei.content.model.Nugget;
 import se.kits.gakusei.content.model.WordType;
 import se.kits.gakusei.content.repository.BookRepository;
 import se.kits.gakusei.content.repository.LessonRepository;
-import se.kits.gakusei.gakuseiadmin.content.AdminWordTypeRepository;
+import se.kits.gakusei.content.repository.WordTypeRepository;
 import se.kits.gakusei.util.ParserFailureException;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class CSVNugget {
 
     private LessonRepository lessonRepository;
     private BookRepository bookRepository;
-    private AdminWordTypeRepository adminWordTypeRepository;
+    private WordTypeRepository wordTypeRepository;
 
     private String[] values;
 
@@ -34,11 +34,11 @@ public class CSVNugget {
 
     private final int EXPECTED_NUMBER_OF_VALUES = 9;
 
-    public CSVNugget(String[] values, LessonRepository lr, BookRepository br, AdminWordTypeRepository wtr){
+    public CSVNugget(String[] values, LessonRepository lr, BookRepository br, WordTypeRepository wtr){
         this.values = values;
         lessonRepository = lr;
         bookRepository = br;
-        adminWordTypeRepository = wtr;
+        wordTypeRepository = wtr;
         initialCheck();
     }
 
@@ -67,7 +67,7 @@ public class CSVNugget {
     }
 
     private WordType createWordType(String s){
-        WordType wt = adminWordTypeRepository.findByType(s);
+        WordType wt = wordTypeRepository.findByType(s);
 
         if(wt != null) {
             return wt;
