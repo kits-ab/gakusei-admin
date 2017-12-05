@@ -29,7 +29,7 @@ public class AdminGrammarHandler {
     public List<HashMap<String, Object>> createGrammarLists() {
         List<HashMap<String, Object>> grammarLists = new ArrayList<>();
 
-        for(Lesson lesson : lessonRepository.findVocabularyLessons()){
+        for(Lesson lesson : lessonRepository.findAllByOrderByName()){
             grammarLists.add(getGrammarList(lesson.getId()));
         }
 
