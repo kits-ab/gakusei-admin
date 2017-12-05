@@ -165,4 +165,15 @@ public class AdminQuizHandler extends QuizHandler {
         incorrectAnswerRepository.deleteByQuizNuggetId(quizNuggetId);
         quizNuggetRepository.delete(quizNuggetId);
     }
+
+    public List<HashMap<String, Object>> getQuizNuggets(Long quizId) {
+        List<QuizNugget> quizNuggets = quizNuggetRepository.findByQuizId(quizId);
+        List<HashMap<String, Object>> myQuizNuggets = new ArrayList<>();
+
+        for (QuizNugget quizNugget : quizNuggets) {
+            HashMap<String, Object> myQuizNugget = convertQuizNugget(quizNugget);
+            myQuizNuggets.add(myQuizNugget);
+        }
+        return myQuizNuggets;
+    }
 }
