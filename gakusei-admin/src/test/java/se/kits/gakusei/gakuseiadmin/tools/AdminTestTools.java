@@ -140,20 +140,20 @@ public class AdminTestTools {
         return new ObjectMapper().writeValueAsString(questions);
     }
 
-    public static IncorrectAnswers generateIncorrectAnswer(QuizNugget quizNugget) {
+    public static IncorrectAnswer generateIncorrectAnswer(QuizNugget quizNugget) {
         return createIncorrectAnswer(quizNugget, "");
     }
 
-    public static List<IncorrectAnswers> generateIncorrectAnswers(QuizNugget quizNugget, int nbrOfIncorrectAnswers) {
-        List<IncorrectAnswers> incorrectAnswers = new ArrayList<>();
+    public static List<IncorrectAnswer> generateIncorrectAnswers(QuizNugget quizNugget, int nbrOfIncorrectAnswers) {
+        List<IncorrectAnswer> incorrectAnswers = new ArrayList<>();
          for (int i = 1; i <= nbrOfIncorrectAnswers; i++) {
             incorrectAnswers.add(createIncorrectAnswer(quizNugget, Integer.toString(i)));
         }
         return incorrectAnswers;
     }
 
-    private static IncorrectAnswers createIncorrectAnswer(QuizNugget quizNugget, String suffix) {
-        IncorrectAnswers answer = new IncorrectAnswers();
+    private static IncorrectAnswer createIncorrectAnswer(QuizNugget quizNugget, String suffix) {
+        IncorrectAnswer answer = new IncorrectAnswer();
         answer.setIncorrectAnswer("incorrect " + suffix);
         answer.setQuizNugget(quizNugget);
         return answer;

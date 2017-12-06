@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import se.kits.gakusei.content.model.IncorrectAnswers;
+import se.kits.gakusei.content.model.IncorrectAnswer;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
@@ -56,8 +56,8 @@ public class AdminQuizHandlerTest {
         return quizNugget;
     }
 
-    private IncorrectAnswers generateIncorrectAnswer(QuizNugget quizNugget) {
-        IncorrectAnswers incorrectAnswers = new IncorrectAnswers();
+    private IncorrectAnswer generateIncorrectAnswer(QuizNugget quizNugget) {
+        IncorrectAnswer incorrectAnswers = new IncorrectAnswer();
         incorrectAnswers.setIncorrectAnswer("Incorrect");
         incorrectAnswers.setQuizNugget(quizNugget);
         incorrectAnswers = this.incorrectAnswerRepository.save(incorrectAnswers);

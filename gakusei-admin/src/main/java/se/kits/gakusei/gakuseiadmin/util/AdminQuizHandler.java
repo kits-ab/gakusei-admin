@@ -1,7 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.util;
 
 import org.springframework.stereotype.Component;
-import se.kits.gakusei.content.model.IncorrectAnswers;
+import se.kits.gakusei.content.model.IncorrectAnswer;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.util.QuizHandler;
@@ -94,7 +94,7 @@ public class AdminQuizHandler extends QuizHandler {
     }
 
     private void createIncorrectAnswer(HashMap<String, Object> myIncorrectAnswer, QuizNugget quizNugget) {
-        IncorrectAnswers incorrectAnswer = new IncorrectAnswers();
+        IncorrectAnswer incorrectAnswer = new IncorrectAnswer();
         incorrectAnswer.setIncorrectAnswer((String) myIncorrectAnswer.get(this.IA_INCORRECT_ANSWERS));
         incorrectAnswer.setQuizNugget(quizNugget);
         this.incorrectAnswerRepository.save(incorrectAnswer);
@@ -127,7 +127,7 @@ public class AdminQuizHandler extends QuizHandler {
     }
 
     private void updateIncorrectAnswer(HashMap<String, Object> myIncorrectAnswer) {
-        IncorrectAnswers incorrectAnswer = this.incorrectAnswerRepository.findOne(
+        IncorrectAnswer incorrectAnswer = this.incorrectAnswerRepository.findOne(
                 new Long((int) myIncorrectAnswer.get(this.IA_ID)));
         incorrectAnswer.setIncorrectAnswer((String) myIncorrectAnswer.get(this.IA_INCORRECT_ANSWERS));
 
@@ -145,10 +145,10 @@ public class AdminQuizHandler extends QuizHandler {
 
     public void saveQuiz(Quiz quiz,
                           ArrayList<QuizNugget> quizNuggets,
-                          ArrayList<Iterable<IncorrectAnswers>> incorrectAnswers) {
+                          ArrayList<Iterable<IncorrectAnswer>> incorrectAnswers) {
         quizRepository.save(quiz);
         quizNuggetRepository.save(quizNuggets);
-        for (Iterable<IncorrectAnswers> ia : incorrectAnswers) {
+        for (Iterable<IncorrectAnswer> ia : incorrectAnswers) {
             incorrectAnswerRepository.save(ia);
         }
     }

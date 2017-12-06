@@ -1,6 +1,6 @@
 package se.kits.gakusei.gakuseiadmin.util;
 
-import se.kits.gakusei.content.model.IncorrectAnswers;
+import se.kits.gakusei.content.model.IncorrectAnswer;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.util.ParserFailureException;
@@ -28,7 +28,7 @@ public class ParseResult {
     private Quiz associatedQuiz;
 
     private ArrayList<QuizNugget> parsedQuizNuggets;
-    private ArrayList<Iterable<IncorrectAnswers>> parsedIncorrectAnswers;
+    private ArrayList<Iterable<IncorrectAnswer>> parsedIncorrectAnswers;
 
     public ParseResult(Map<String, List<String[]>> parseResult, Quiz associatedQuiz){
         parsedIncorrectAnswers = new ArrayList<>();
@@ -51,7 +51,7 @@ public class ParseResult {
 
                 CSVQuizNugget csvQuizNugget = new CSVQuizNugget(rowWithQuizInfo);
                 QuizNugget quizNugget = csvQuizNugget.getQuizNugget(associatedQuiz);
-                Iterable<IncorrectAnswers> incorrectAnswers = csvQuizNugget.getIncorrectAnswers(quizNugget);
+                Iterable<IncorrectAnswer> incorrectAnswers = csvQuizNugget.getIncorrectAnswers(quizNugget);
 
                 parsedQuizNuggets.add(quizNugget);
                 parsedIncorrectAnswers.add(incorrectAnswers);
@@ -83,7 +83,7 @@ public class ParseResult {
         return parsedQuizNuggets;
     }
 
-    public ArrayList<Iterable<IncorrectAnswers>> getParsedIncorrectAnswers() {
+    public ArrayList<Iterable<IncorrectAnswer>> getParsedIncorrectAnswers() {
         return parsedIncorrectAnswers;
     }
 

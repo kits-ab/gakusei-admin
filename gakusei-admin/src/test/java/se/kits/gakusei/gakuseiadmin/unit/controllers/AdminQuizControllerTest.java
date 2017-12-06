@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import se.kits.gakusei.content.model.IncorrectAnswers;
+import se.kits.gakusei.content.model.IncorrectAnswer;
 import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
@@ -144,7 +144,7 @@ public class AdminQuizControllerTest {
         List<QuizNugget> quizNuggetsAfterDelete = AdminTestTools.iterableToQuizNuggetList(quizNuggetRepository
                 .findAll(quizNuggetIds));
 
-        List<List<IncorrectAnswers>> answersAfterDelete = new ArrayList<>();
+        List<List<IncorrectAnswer>> answersAfterDelete = new ArrayList<>();
         quizNuggetIds.stream().map(id -> answersAfterDelete.add(incorrectAnswerRepository.findByQuizNuggetId(id)));
 
         Assert.assertEquals(false, quizRepository.exists(testQuiz.getId()));
@@ -188,7 +188,7 @@ public class AdminQuizControllerTest {
 
     public void testCreateIncorrectAnswerOK() throws Exception {
         QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
-        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(qn);
+        IncorrectAnswer ia = AdminTestTools.generateIncorrectAnswer(qn);
 
         String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
 
@@ -202,7 +202,7 @@ public class AdminQuizControllerTest {
 
     @Test
     public void testCreateIncorrectAnswerQuizNotFound() throws Exception {
-        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(new QuizNugget());
+        IncorrectAnswer ia = AdminTestTools.generateIncorrectAnswer(new QuizNugget());
         String incorrectAnswerString = new ObjectMapper().writeValueAsString(ia);
 
         try {
@@ -218,7 +218,7 @@ public class AdminQuizControllerTest {
     @Test
     public void testDeleteIncorrectAnswerOK() throws Exception {
         QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
-        IncorrectAnswers ia = incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswer(qn));
+        IncorrectAnswer ia = incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswer(qn));
 
         try {
             mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isOk());
@@ -228,7 +228,7 @@ public class AdminQuizControllerTest {
     @Test
     public void testDeleteIncorrectAnswerNotFound() throws Exception {
         QuizNugget qn = quizNuggetRepository.save(AdminTestTools.generateQuizNugget(testQuiz));
-        IncorrectAnswers ia = AdminTestTools.generateIncorrectAnswer(qn);
+        IncorrectAnswer ia = AdminTestTools.generateIncorrectAnswer(qn);
 
         try {
             mockMvc.perform(delete("/api/quizes/nuggets/incorrectAnswers/" + ia.getId())).andExpect(status().isNotFound());
