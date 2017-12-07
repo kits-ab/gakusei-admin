@@ -1,5 +1,7 @@
 package se.kits.gakusei.gakuseiadmin.unit.util;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -12,13 +14,14 @@ import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
+import se.kits.gakusei.gakuseiadmin.dto.QuizNuggetDTO;
 import se.kits.gakusei.gakuseiadmin.tools.AdminTestTools;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -37,86 +40,59 @@ public class AdminQuizHandlerTest {
     @Autowired
     private IncorrectAnswerRepository incorrectAnswerRepository;
 
-    private Quiz generateQuiz() {
-        Quiz quiz = new Quiz();
-        quiz.setName("Temp quiz");
-        quiz.setDescription("Temp quiz");
-        return this.quizRepository.save(quiz);
+    private Quiz quiz;
+    private QuizNugget quizNugget;
+    private List<IncorrectAnswer> incorrectAnswers;
+    private QuizNuggetDTO quizNuggetDTO;
+
+    @Before
+    public void setup() {
+        quiz = quizRepository.save(AdminTestTools.generateQuiz("test"));
+        quizNugget = AdminTestTools.generateQuizNugget(quiz);
+        incorrectAnswers = AdminTestTools.generateIncorrectAnswersWithoutNugget(3);
+        quizNuggetDTO = AdminTestTools.generateQuizNuggetDTO(quiz.getId(), quizNugget, incorrectAnswers);
     }
 
-    private QuizNugget generateQuizNugget(boolean save) {
-        QuizNugget quizNugget = new QuizNugget();
-        quizNugget.setQuestion("?");
-        quizNugget.setCorrectAnswer("42");
-        Quiz quizRef = generateQuiz();
-        quizNugget.setQuiz(quizRef);
-
-        if (save)
-            quizNugget = this.quizNuggetRepository.save(quizNugget);
-        return quizNugget;
-    }
-
-    private IncorrectAnswer generateIncorrectAnswer(QuizNugget quizNugget) {
-        IncorrectAnswer incorrectAnswers = new IncorrectAnswer();
-        incorrectAnswers.setIncorrectAnswer("Incorrect");
-        incorrectAnswers.setQuizNugget(quizNugget);
-        incorrectAnswers = this.incorrectAnswerRepository.save(incorrectAnswers);
-        return incorrectAnswers;
-    }
-
-    private HashMap<String, Object> constructQuizNugget() {
-        HashMap<String, Object> quizNugget = this.adminQuizHandler.convertQuizNugget(this.generateQuizNugget(false));
-        // NEEDS TO BE AN INT
-        quizNugget.put(this.adminQuizHandler.QN_QUIZ_REF, ((Long) quizNugget.get(this.adminQuizHandler.QN_QUIZ_REF)).intValue());
-
-        List<HashMap<String, Object>> incorrectAnswers = new ArrayList<>();
-        for (int i=0; i<3; i++) {
-            HashMap<String, Object> incorrectAnswer = new HashMap<>();
-            incorrectAnswer.put("incorrectAnswer", "answer"+i);
-            incorrectAnswers.add(incorrectAnswer);
-        }
-        quizNugget.put("incorrectAnswers", incorrectAnswers);
-
-        return quizNugget;
-    }
-
-    @Test
-    public void testCreateQuizNugget() throws Exception {
-        HashMap<String, Object> quizNugget = null;
-
-        try {
-            quizNugget = adminQuizHandler.createAndValidateQuizNugget(this.constructQuizNugget());
-        } catch (Exception exc) {
-            assert false;
-        }
-
-        assertTrue(quizNugget.containsKey("id"));
-        assertTrue(this.quizNuggetRepository.exists((Long) quizNugget.get("id")));
-
+    @After
+    public void tearDown() {
         AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
     }
 
     @Test
-    public void testUpdateQuizNugget() throws Exception {
-        QuizNugget quizNugget = this.generateQuizNugget(true);
-        for (int i=0; i<3; i++)
-            this.generateIncorrectAnswer(quizNugget);
+    public void testCreateQuizNugget() {
+        QuizNugget testQuizNugget = adminQuizHandler.createQuizNugget(quizNuggetDTO);
+        List<Long> quizNuggetIds = quizNuggetRepository.findByQuizId(quiz.getId()).stream().map(QuizNugget::getId)
+                .collect(Collectors.toList());
+        assertTrue(quizNuggetIds.contains(testQuizNugget.getId()));
+    }
 
-        HashMap<String, Object> myQuizNugget = adminQuizHandler.convertQuizNugget(quizNugget);
-        myQuizNugget.put(adminQuizHandler.QN_CORRECT_ANSWER, "Gakusei");
+    @Test
+    public void testCreateIncorrectAnswers() {
+        QuizNugget testQuizNugget = quizNuggetRepository.save(quizNugget);
+        List<IncorrectAnswer> testAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswers, testQuizNugget);
+        List<Long> answerIds = incorrectAnswerRepository.findByQuizNuggetId(quizNugget.getId()).stream().map
+                (IncorrectAnswer::getId).collect(Collectors.toList());
+        List<Long> testAnswerIds = testAnswers.stream().map(IncorrectAnswer::getId).collect(Collectors.toList());
+        assertTrue(answerIds.equals(testAnswerIds));
+    }
 
-        // CONVERT LONG TO INT
-        myQuizNugget.put(adminQuizHandler.QN_ID,((Long) myQuizNugget.get(adminQuizHandler.QN_ID)).intValue());
-        myQuizNugget.put(adminQuizHandler.QN_QUIZ_REF,((Long) myQuizNugget.get(adminQuizHandler.QN_QUIZ_REF)).intValue());
-        for (HashMap<String, Object> myIncorrectAnswer : (List<HashMap>) myQuizNugget.get(adminQuizHandler.QN_INCORRECT_ANSWERS))
-            myIncorrectAnswer.put(adminQuizHandler.IA_ID,((Long) myIncorrectAnswer.get(adminQuizHandler.IA_ID)).intValue());
+    @Test
+    public void testHandleDeleteQuizNugget() {
+        QuizNugget testQuizNugget = quizNuggetRepository.save(quizNugget);
+        incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswers(quizNugget, 3));
+        adminQuizHandler.handleDeleteQuizNugget(testQuizNugget.getId());
+        assertFalse(quizNuggetRepository.exists(testQuizNugget.getId()));
+        assertTrue(incorrectAnswerRepository.findByQuizNuggetId(testQuizNugget.getId()).isEmpty());
+    }
 
-        try {
-            adminQuizHandler.updateAndValidateQuizNugget(myQuizNugget);
-        } catch (Exception exc) {
-            assert false;
-        }
-
-        AdminTestTools.tearDownQuiz(quizRepository, quizNuggetRepository, incorrectAnswerRepository);
+    @Test
+    public void testHandleDeleteQuiz() {
+        Long quizId = quiz.getId();
+        QuizNugget testQuizNugget = quizNuggetRepository.save(quizNugget);
+        incorrectAnswerRepository.save(AdminTestTools.generateIncorrectAnswers(quizNugget, 3));
+        adminQuizHandler.handleDeleteQuiz(quizId);
+        assertFalse(quizRepository.exists(quizId));
+        assertTrue(quizNuggetRepository.findByQuizId(quizId).isEmpty());
+        assertTrue(incorrectAnswerRepository.findByQuizNuggetId(testQuizNugget.getId()).isEmpty());
     }
 }

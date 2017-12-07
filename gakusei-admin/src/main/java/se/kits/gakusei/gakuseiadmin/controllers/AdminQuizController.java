@@ -11,16 +11,12 @@ import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
+import se.kits.gakusei.gakuseiadmin.dto.QuizNuggetDTO;
 import se.kits.gakusei.gakuseiadmin.util.ParseResult;
-import se.kits.gakusei.gakuseiadmin.util.csv.CSVQuiz;
-import se.kits.gakusei.gakuseiadmin.util.FormValidator;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
 import se.kits.gakusei.content.repository.QuizRepository;
-import se.kits.gakusei.util.ParserFailureException;
 import se.kits.gakusei.util.csv.CSV;
-import se.kits.gakusei.util.csv.CSVQuizNugget;
 
-import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -48,16 +44,18 @@ public class AdminQuizController {
                                             @RequestBody MultipartFile file) {
         ParseResult parseResult;
 
-        Quiz newQuiz = adminQuizHandler.createNewQuiz(quizName, quizDescription);
+        Quiz quiz = adminQuizHandler.createQuiz(quizName, quizDescription);
 
         try {
-            parseResult = new ParseResult(CSV.parse(file.getInputStream(), 3), newQuiz);
+            parseResult = new ParseResult(CSV.parse(file.getInputStream(), 3), quiz);
         } catch (Exception e) {
-            return new ResponseEntity<>(Collections.singletonList("Filen kunde inte läsas: " + e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(Collections.singletonList("Filen kunde inte läsas: " + e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         }
 
         if(parseResult.isSuccessful()){
-            adminQuizHandler.saveQuiz(newQuiz, parseResult.getParsedQuizNuggets(), parseResult.getParsedIncorrectAnswers());
+            adminQuizHandler.saveQuiz(
+                    quiz, parseResult.getParsedQuizNuggets(), parseResult.getParsedIncorrectAnswers());
         } else {
             return new ResponseEntity<>(parseResult.getErrors(), HttpStatus.BAD_REQUEST);
         }
@@ -110,14 +108,16 @@ public class AdminQuizController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<HashMap<String, Object>> createQuizNugget(@RequestBody HashMap<String, Object> myQuizNugget) {
-        HashMap<String, Object> newMyQuizNugget = null;
-        try {
-            newMyQuizNugget = adminQuizHandler.createAndValidateQuizNugget(myQuizNugget);
-        } catch (FormValidator.FormException exc) {
-            return new ResponseEntity<>(exc.getErrMap(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<QuizNuggetDTO> createQuizNugget(@RequestBody QuizNuggetDTO quizNuggetDTO) {
+        List<IncorrectAnswer> incorrectAnswers = quizNuggetDTO.getIncorrectAnswers();
+        if (incorrectAnswers.size() < 3) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(newMyQuizNugget, HttpStatus.CREATED);
+        QuizNugget quizNugget = adminQuizHandler.createQuizNugget(quizNuggetDTO);
+        incorrectAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswers, quizNugget);
+        quizNuggetDTO = adminQuizHandler.updateQuizNuggetDTO(quizNuggetDTO, incorrectAnswers, quizNugget.getId());
+
+        return new ResponseEntity<>(quizNuggetDTO, HttpStatus.CREATED);
     }
 
     @RequestMapping(
@@ -125,17 +125,18 @@ public class AdminQuizController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<?> createQuizNuggets(@RequestBody List<HashMap<String, Object>> myQuizNuggets) {
-        List<HashMap<String, Object>> newMyQuizNuggets = new ArrayList<>();
-        try {
-            for (HashMap<String, Object> quizNugget : myQuizNuggets) {
-                newMyQuizNuggets.
-                        add(adminQuizHandler.createAndValidateQuizNugget(quizNugget));
+    public ResponseEntity<List<QuizNuggetDTO>> createQuizNuggets(@RequestBody List<QuizNuggetDTO> quizNuggetDTOs) {
+        List<QuizNuggetDTO> responseList = new ArrayList<>();
+        for (QuizNuggetDTO dto : quizNuggetDTOs) {
+            ResponseEntity<QuizNuggetDTO> response = createQuizNugget(dto);
+            if(!response.getStatusCode().is2xxSuccessful()) {
+                // Stop iterating if we run into errors
+                return new ResponseEntity<>(response.getStatusCode());
             }
-        } catch (FormValidator.FormException exc) {
-            return new ResponseEntity<>(exc.getErrMap(), HttpStatus.BAD_REQUEST);
+            responseList.add(response.getBody());
         }
-        return new ResponseEntity<Iterable<HashMap<String, Object>>>(newMyQuizNuggets, HttpStatus.CREATED);
+
+        return new ResponseEntity<>(responseList, HttpStatus.CREATED);
     }
 
 
@@ -144,13 +145,17 @@ public class AdminQuizController {
             method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<HashMap<String, Object>> updateQuizNugget(@RequestBody HashMap<String, Object> myQuizNugget) {
-        try {
-            adminQuizHandler.updateAndValidateQuizNugget(myQuizNugget);
-        } catch (FormValidator.FormException exc) {
-            return new ResponseEntity(exc.getErrMap(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<QuizNuggetDTO> updateQuizNugget(@RequestBody QuizNuggetDTO quizNuggetDTO) {
+        List<IncorrectAnswer> incorrectAnswers = quizNuggetDTO.getIncorrectAnswers();
+        if (incorrectAnswers.size() < 3) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(myQuizNugget, HttpStatus.OK);
+        QuizNugget quizNugget = adminQuizHandler.updateQuizNugget(quizNuggetDTO);
+        incorrectAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswers, quizNugget);
+        quizNuggetDTO = adminQuizHandler.updateQuizNuggetDTO(quizNuggetDTO, incorrectAnswers, quizNugget.getId());
+
+        return new ResponseEntity<>(quizNuggetDTO, HttpStatus.OK);
+
     }
 
     @RequestMapping(
@@ -158,8 +163,8 @@ public class AdminQuizController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<HashMap<String, Object>>> getQuizNuggets(@PathVariable(value="quizId") Long quizId) {
-        List<HashMap<String, Object>> quizNuggets = adminQuizHandler.getQuizNuggets(quizId);
+    public ResponseEntity<List<QuizNuggetDTO>> getQuizNuggets(@PathVariable(value="quizId") Long quizId) {
+        List<QuizNuggetDTO> quizNuggets = adminQuizHandler.getQuizNuggets(quizId);
         return new ResponseEntity<>(quizNuggets, HttpStatus.OK);
     }
 
