@@ -11,6 +11,7 @@ import se.kits.gakusei.content.model.Quiz;
 import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
+import se.kits.gakusei.gakuseiadmin.dto.IncorrectAnswerDTO;
 import se.kits.gakusei.gakuseiadmin.dto.QuizNuggetDTO;
 import se.kits.gakusei.gakuseiadmin.util.ParseResult;
 import se.kits.gakusei.gakuseiadmin.util.AdminQuizHandler;
@@ -109,13 +110,15 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<QuizNuggetDTO> createQuizNugget(@RequestBody QuizNuggetDTO quizNuggetDTO) {
-        List<IncorrectAnswer> incorrectAnswers = quizNuggetDTO.getIncorrectAnswers();
-        if (incorrectAnswers.size() < 3) {
+        List<IncorrectAnswerDTO> incorrectAnswerDTOs = quizNuggetDTO.getIncorrectAnswers();
+        if (incorrectAnswerDTOs.size() < 3) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         QuizNugget quizNugget = adminQuizHandler.createQuizNugget(quizNuggetDTO);
-        incorrectAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswers, quizNugget);
-        quizNuggetDTO = adminQuizHandler.updateQuizNuggetDTO(quizNuggetDTO, incorrectAnswers, quizNugget.getId());
+        List<IncorrectAnswer> incorrectAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswerDTOs,
+                quizNugget);
+        incorrectAnswerDTOs = adminQuizHandler.createIncorrectAnswerDTOs(incorrectAnswers);
+        quizNuggetDTO = adminQuizHandler.patchQuizNuggetDTO(quizNuggetDTO, incorrectAnswerDTOs, quizNugget.getId());
 
         return new ResponseEntity<>(quizNuggetDTO, HttpStatus.CREATED);
     }
@@ -146,13 +149,15 @@ public class AdminQuizController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<QuizNuggetDTO> updateQuizNugget(@RequestBody QuizNuggetDTO quizNuggetDTO) {
-        List<IncorrectAnswer> incorrectAnswers = quizNuggetDTO.getIncorrectAnswers();
-        if (incorrectAnswers.size() < 3) {
+        List<IncorrectAnswerDTO> incorrectAnswerDTOs = quizNuggetDTO.getIncorrectAnswers();
+        if (incorrectAnswerDTOs.size() < 3) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        QuizNugget quizNugget = adminQuizHandler.updateQuizNugget(quizNuggetDTO);
-        incorrectAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswers, quizNugget);
-        quizNuggetDTO = adminQuizHandler.updateQuizNuggetDTO(quizNuggetDTO, incorrectAnswers, quizNugget.getId());
+        QuizNugget quizNugget = adminQuizHandler.updateQuizNugget(quizNuggetDTO, quizNuggetRepository.findOne(quizNuggetDTO.getId()));
+        List<IncorrectAnswer> incorrectAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswerDTOs,
+                quizNugget);
+        incorrectAnswerDTOs = adminQuizHandler.createIncorrectAnswerDTOs(incorrectAnswers);
+        quizNuggetDTO = adminQuizHandler.patchQuizNuggetDTO(quizNuggetDTO, incorrectAnswerDTOs, quizNugget.getId());
 
         return new ResponseEntity<>(quizNuggetDTO, HttpStatus.OK);
 

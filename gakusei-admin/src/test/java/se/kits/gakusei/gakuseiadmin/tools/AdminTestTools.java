@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
+import se.kits.gakusei.gakuseiadmin.dto.IncorrectAnswerDTO;
 import se.kits.gakusei.gakuseiadmin.dto.QuizNuggetDTO;
 import se.kits.gakusei.user.model.User;
 import se.kits.gakusei.content.model.*;
@@ -122,9 +123,19 @@ public class AdminTestTools {
         QuizNuggetDTO quizNuggetDTO = new QuizNuggetDTO();
         quizNuggetDTO.setQuestion(quizNugget.getQuestion());
         quizNuggetDTO.setCorrectAnswer(quizNugget.getCorrectAnswer());
-        quizNuggetDTO.setIncorrectAnswers(incorrectAnswers);
+        quizNuggetDTO.setIncorrectAnswers(createIncorrectAnswerDTOs(incorrectAnswers));
         quizNuggetDTO.setQuizRef(quizId);
         return quizNuggetDTO;
+    }
+
+    private static List<IncorrectAnswerDTO> createIncorrectAnswerDTOs(List<IncorrectAnswer> incorrectAnswers) {
+        return incorrectAnswers.stream().map(AdminTestTools::createIncorrectAnswerDTO).collect(Collectors.toList());
+    }
+
+    private static IncorrectAnswerDTO createIncorrectAnswerDTO(IncorrectAnswer incorrectAnswer) {
+        IncorrectAnswerDTO dto = new IncorrectAnswerDTO();
+        dto.setIncorrectAnswer(incorrectAnswer.getIncorrectAnswer());
+        return dto;
     }
 
     private static QuizNugget createQuizNugget(Quiz quiz, String suffix) {

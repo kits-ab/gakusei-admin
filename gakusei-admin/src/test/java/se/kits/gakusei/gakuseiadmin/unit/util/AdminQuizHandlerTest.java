@@ -69,7 +69,8 @@ public class AdminQuizHandlerTest {
     @Test
     public void testCreateIncorrectAnswers() {
         QuizNugget testQuizNugget = quizNuggetRepository.save(quizNugget);
-        List<IncorrectAnswer> testAnswers = adminQuizHandler.createIncorrectAnswers(incorrectAnswers, testQuizNugget);
+        List<IncorrectAnswer> testAnswers = adminQuizHandler.createIncorrectAnswers(quizNuggetDTO.getIncorrectAnswers(),
+                testQuizNugget);
         List<Long> answerIds = incorrectAnswerRepository.findByQuizNuggetId(quizNugget.getId()).stream().map
                 (IncorrectAnswer::getId).collect(Collectors.toList());
         List<Long> testAnswerIds = testAnswers.stream().map(IncorrectAnswer::getId).collect(Collectors.toList());

@@ -8,6 +8,7 @@ import se.kits.gakusei.content.model.QuizNugget;
 import se.kits.gakusei.content.repository.IncorrectAnswerRepository;
 import se.kits.gakusei.content.repository.QuizNuggetRepository;
 import se.kits.gakusei.content.repository.QuizRepository;
+import se.kits.gakusei.gakuseiadmin.dto.IncorrectAnswerDTO;
 import se.kits.gakusei.gakuseiadmin.dto.QuizNuggetDTO;
 
 import java.util.ArrayList;
@@ -29,28 +30,45 @@ public class AdminQuizHandler {
     }
 
     public QuizNugget createQuizNugget(QuizNuggetDTO quizNuggetDTO) {
-        QuizNugget quizNugget = new QuizNugget();
-        quizNugget.setQuiz(quizRepository.findOne(quizNuggetDTO.getQuizRef()));
-        quizNugget.setQuestion(quizNuggetDTO.getQuestion());
-        quizNugget.setCorrectAnswer(quizNuggetDTO.getCorrectAnswer());
-        return quizNuggetRepository.save(quizNugget);
+        return updateQuizNugget(quizNuggetDTO, new QuizNugget());
     }
 
-    public List<IncorrectAnswer> createIncorrectAnswers(List<IncorrectAnswer> incorrectAnswers, QuizNugget quizNugget) {
-        incorrectAnswers.forEach(a -> a.setQuizNugget(quizNugget));
+    public List<IncorrectAnswer> createIncorrectAnswers(List<IncorrectAnswerDTO> incorrectAnswerDTOs,
+                                                        QuizNugget quizNugget) {
+        List<IncorrectAnswer> incorrectAnswers = incorrectAnswerDTOs.stream().map(a -> createIncorrectAnswer(a,
+                quizNugget)).collect(Collectors.toList());
         incorrectAnswerRepository.save(incorrectAnswers);
         return incorrectAnswers;
     }
 
-    public QuizNuggetDTO updateQuizNuggetDTO(QuizNuggetDTO quizNuggetDTO, List<IncorrectAnswer> incorrectAnswers,
+    private IncorrectAnswer createIncorrectAnswer(IncorrectAnswerDTO incorrectAnswerDTO, QuizNugget quizNugget) {
+        IncorrectAnswer incorrectAnswer = new IncorrectAnswer();
+        incorrectAnswer.setIncorrectAnswer(incorrectAnswerDTO.getIncorrectAnswer());
+        incorrectAnswer.setQuizNugget(quizNugget);
+        return incorrectAnswer;
+    }
+
+    public QuizNuggetDTO patchQuizNuggetDTO(QuizNuggetDTO quizNuggetDTO, List<IncorrectAnswerDTO> incorrectAnswers,
                                              Long quizNuggetId) {
         quizNuggetDTO.setIncorrectAnswers(incorrectAnswers);
         quizNuggetDTO.setId(quizNuggetId);
         return quizNuggetDTO;
     }
 
-    public QuizNugget updateQuizNugget(QuizNuggetDTO quizNuggetDTO) {
-        QuizNugget quizNugget = quizNuggetRepository.findOne(quizNuggetDTO.getId());
+    public List<IncorrectAnswerDTO> createIncorrectAnswerDTOs(List<IncorrectAnswer> incorrectAnswers) {
+        return incorrectAnswers.stream().map(AdminQuizHandler::createIncorrectAnswerDTO)
+                .collect(Collectors.toList());
+    }
+
+    private static IncorrectAnswerDTO createIncorrectAnswerDTO(IncorrectAnswer incorrectAnswer) {
+        IncorrectAnswerDTO incorrectAnswerDTO = new IncorrectAnswerDTO();
+        incorrectAnswerDTO.setIncorrectAnswer(incorrectAnswer.getIncorrectAnswer());
+        incorrectAnswerDTO.setId(incorrectAnswer.getId());
+        return incorrectAnswerDTO;
+
+    }
+
+    public QuizNugget updateQuizNugget(QuizNuggetDTO quizNuggetDTO, QuizNugget quizNugget) {
         quizNugget.setQuestion(quizNuggetDTO.getQuestion());
         quizNugget.setCorrectAnswer(quizNuggetDTO.getCorrectAnswer());
         Quiz quizRef = quizRepository.findOne(quizNuggetDTO.getQuizRef());
@@ -90,9 +108,10 @@ public class AdminQuizHandler {
         List<QuizNuggetDTO> quizNuggetDTOs = new ArrayList<>();
         for (QuizNugget quizNugget : quizNuggets) {
             QuizNuggetDTO dto = new QuizNuggetDTO();
-            dto.setId(quizId);
-            dto.setQuizRef(quizNugget.getQuiz().getId());
-            dto.setIncorrectAnswers(incorrectAnswerRepository.findByQuizNuggetId(quizId));
+            dto.setId(quizNugget.getId());
+            dto.setQuizRef(quizId);
+            dto.setIncorrectAnswers(createIncorrectAnswerDTOs(incorrectAnswerRepository.findByQuizNuggetId
+                    (quizNugget.getId())));
             dto.setCorrectAnswer(quizNugget.getCorrectAnswer());
             dto.setQuestion(quizNugget.getQuestion());
             quizNuggetDTOs.add(dto);

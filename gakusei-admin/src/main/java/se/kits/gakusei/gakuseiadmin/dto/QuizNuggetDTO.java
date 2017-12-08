@@ -1,7 +1,5 @@
 package se.kits.gakusei.gakuseiadmin.dto;
 
-import se.kits.gakusei.content.model.IncorrectAnswer;
-
 import java.util.List;
 
 public class QuizNuggetDTO {
@@ -10,7 +8,7 @@ public class QuizNuggetDTO {
     private Long quizRef;
     private String question;
     private String correctAnswer;
-    private List<IncorrectAnswer> incorrectAnswers;
+    private List<IncorrectAnswerDTO> incorrectAnswerDTOs;
 
     public QuizNuggetDTO(){}
 
@@ -39,12 +37,12 @@ public class QuizNuggetDTO {
         this.correctAnswer = correctAnswer;
     }
 
-    public List<IncorrectAnswer> getIncorrectAnswers() {
-        return incorrectAnswers;
+    public List<IncorrectAnswerDTO> getIncorrectAnswers() {
+        return incorrectAnswerDTOs;
     }
 
-    public void setIncorrectAnswers(List<IncorrectAnswer> incorrectAnswers) {
-        this.incorrectAnswers = incorrectAnswers;
+    public void setIncorrectAnswers(List<IncorrectAnswerDTO> incorrectAnswerDTOs) {
+        this.incorrectAnswerDTOs = incorrectAnswerDTOs;
     }
 
     public Long getId() {
