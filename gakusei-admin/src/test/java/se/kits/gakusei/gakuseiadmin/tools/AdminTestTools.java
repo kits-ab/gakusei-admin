@@ -211,7 +211,6 @@ public class AdminTestTools {
         nugget.setSwedish("swedish" + suffix);
         nugget.setJpRead("jpRead" + suffix);
         nugget.setJpWrite("jpWrite" + suffix);
-        nugget.setType(wordType.getType());
         nugget.setWordType(wordType);
         nugget.setBooks(books);
         return nugget;

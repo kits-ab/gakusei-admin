@@ -41,11 +41,6 @@ public class FileUploadController {
         try {
             List<Nugget> nuggets = parser.parse();
 
-            // Set types temporarily as it wil be removed when migrating
-            for(Nugget n : nuggets){
-                n.setType("Test");
-            }
-
             Iterable<Nugget> savedNuggets = nuggetRepository.save(nuggets);
             updateLesson(savedNuggets);
 
