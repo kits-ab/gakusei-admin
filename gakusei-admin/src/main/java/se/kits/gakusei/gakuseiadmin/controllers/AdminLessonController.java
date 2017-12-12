@@ -57,6 +57,18 @@ public class AdminLessonController {
     }
 
     @RequestMapping(
+            value = "/api/lessons",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Lesson> updateLesson(@RequestBody Lesson lesson){
+        if(lessonRepository.exists(lesson.getId())){
+            return new ResponseEntity<>(lessonRepository.save(lesson), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(
             value = "/api/lessons/{id}",
             method = RequestMethod.DELETE
     )
