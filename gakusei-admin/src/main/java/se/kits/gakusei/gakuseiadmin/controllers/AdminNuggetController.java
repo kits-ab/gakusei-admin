@@ -43,7 +43,7 @@ public class AdminNuggetController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<Nugget> updateNugget(@RequestBody Nugget nugget){
-        if(nuggetRepository.equals(nugget.getId())){
+        if(nuggetRepository.exists(nugget.getId())){
             return new ResponseEntity<Nugget>(nuggetRepository.save(nugget), HttpStatus.OK);
         }
         return new ResponseEntity<Nugget>(HttpStatus.NOT_FOUND);
