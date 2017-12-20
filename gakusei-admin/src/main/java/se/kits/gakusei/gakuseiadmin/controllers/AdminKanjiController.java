@@ -7,10 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.Kanji;
 import se.kits.gakusei.content.repository.BookRepository;
@@ -50,6 +47,18 @@ public class AdminKanjiController {
                     adminKanjiRepository.findBySwedishContainingIgnoreCaseAndBooksIn(
                             swedish, books, pageRequest), HttpStatus.OK);
         }
+    }
+
+    @RequestMapping(
+            value = "/api/kanjis/{id}",
+            method = RequestMethod.DELETE
+    )
+    public ResponseEntity<String> deleteKanji(@PathVariable String id){
+        if(adminKanjiRepository.exists(id)){
+            adminKanjiRepository.delete(id);
+            return new ResponseEntity<String>(HttpStatus.OK);
+        }
+        return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
     }
 
 }
