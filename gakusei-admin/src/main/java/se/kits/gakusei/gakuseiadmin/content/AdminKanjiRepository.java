@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import se.kits.gakusei.content.model.Book;
 import se.kits.gakusei.content.model.Kanji;
 
-public interface AdminKanjiRepository extends CrudRepository<Kanji, Long> {
+public interface AdminKanjiRepository extends CrudRepository<Kanji, String> {
 
     Page<Kanji> findAll(Pageable pageRequest);
 
