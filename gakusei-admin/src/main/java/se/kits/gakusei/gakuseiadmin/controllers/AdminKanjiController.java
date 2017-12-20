@@ -50,15 +50,36 @@ public class AdminKanjiController {
     }
 
     @RequestMapping(
+            value = "/api/kanjis",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Kanji> createKanji(@RequestBody Kanji kanji){
+        return new ResponseEntity<>(adminKanjiRepository.save(kanji), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(
+            value = "/api/kanjis",
+            method = RequestMethod.PUT,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Kanji> updateKanji(@RequestBody Kanji kanji){
+        if(adminKanjiRepository.exists(kanji.getId())){
+            return new ResponseEntity<>(adminKanjiRepository.save(kanji), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @RequestMapping(
             value = "/api/kanjis/{id}",
             method = RequestMethod.DELETE
     )
     public ResponseEntity<String> deleteKanji(@PathVariable String id){
         if(adminKanjiRepository.exists(id)){
             adminKanjiRepository.delete(id);
-            return new ResponseEntity<String>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
